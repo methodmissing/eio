@@ -1,0 +1,180 @@
+= eio - a libeio wrapper for Ruby
+
+(c) 2011 Lourens Naudé (methodmissing)
+
+  http://github.com/methodmissing/eio
+
+== Why you may need this
+
+Changing a file descriptor that references a normal file to non-blocking mode (O_NONBLOCK flag) have
+absolutely no effect. Regular files are always readable and always writable. Readability and writability
+checks will also succeed immediately. Such operations can however still block for a undefined amount of time - busy disks, slow disks (EBS) etc. and usually also include a chunk of disk seek time as well
+Manipulating directories, stat'ing files, changing permissions, ownership etc. is only defined through
+synchronous APIs. This is a major drawback for environments where throughput is critical and a high
+degree of interactivity is demanded at all times.
+
+== How it works
+
+A number of OS (pthread) threads is started to execute blocking I/O requests and signal their completion.
+The I/O operations will still block, but you're application's able to do something else and will be
+notified of completion status sometime in the future. This library wraps libeio
+(http://software.schmorp.de/pkg/libeio.html), which also powers node.js's FS module and supports both
+Ruby MRI 1.8 and 1.9.
+
+It's designed to run in a single threaded environment and libeio will manage a pool of OS threads,
+effectively scheduling out I/O ops across multiple cores. This is the same pattern very common in
+implementations of the Reactor pattern (Eventmachine) where I/O requests and callbacks are always
+submitted and handled on the reactor thread. This library thus naturally fits into event driven
+applications and exposes a file descriptor that can wake up an event loop when readable and execute
+callbacks for completed requests on the reactor thread as well.
+
+Event loop integration is however much closer to the Proactor pattern. The I/O multiplexer in a Reactor
+implementation merely notifies of file descriptor state changes - a handler is still responsible for
+reading or writing data on the reactor thread. Callbacks for file system and other blocking system calls
+wrapped by this library receive results as arguments - there's nothing else to do. In other words, the
+Reactor pattern asynchronously notify of state changes, but act on those synchronously, on the Reactor
+thread, which incurs some processing overhead.
+
+In addition to wrapping known blocking system calls, libeio also expose several fallback implementations
+such as readahead, sendfile etc. and is also very effective with system calls that incur a lot of CPU
+overhead managing user space buffers, memcpy etc.
+
+== Sweet Spot
+
+This library solves a specific problem of avoiding blocking I/O work on POSIX APIs that traditionally
+don't support the O_NONBLOCK flag or only have a synchronous interface defined. As with most event driven
+I/O, the goal is increased throughput and not necessarily a faster per request guarantee. The goal is to
+serve more clients with the same or less infrastructure without degrading quality of service.
+
+== Requirements
+
+* A POSIX compliant OS, known to work well on Linux, BSD variants and Mac OS X
+* Ruby MRI 1.8 or 1.9
+* Platform that supports the __VA_ARGS__ macro.
+* It's recommended to use this library in conjunction with an event loop
+* Best results with I/O bound work on disks / volumes with variable performance characteristics.
+
+== How to - with an event loop
+
+The Eventmachine handler watches the read end of a pipe which wakes up the event loop whenever there's
+results to process. This is entirely driven from libeio which writes a char to the write end of the pipe
+to wake up the loop. The EIO.poll callback will fire as many times as it needs to as we don't read data from the pipe through the reactor. A separate callback invoked by libeio will read the char and clear
+it's readable state.
+
+    require 'eio/eventmachine'
+
+    EM.run do
+      EIO.eventmachine_handler # let libeio notify when there's result callbacks to invoke
+
+      EIO.open(__FILE__) do |fd|
+        EIO.read(fd) do |data|
+          p data
+          EIO.close{ EM.stop }
+        end
+      end
+    end
+
+== How to - manually drain the result queue
+
+This library ships with trivial Rack middleware that acts like a barrier at the end of each request. This
+pattern can be applied to any other context as well.
+
+    module EIO
+      class Middleware
+        def initialize(app, opts = {})
+           @app = app
+           @options = opts
+        end
+
+        def call(env)
+          ret = @app.call(env)
+          EIO.wait # flush the libeio request queue
+          ret
+        end
+      end
+    end
+
+    use EIO::Middleware
+
+The call to EIO.wait blocks until callbacks for all completed requests have been invoked. This workflow
+is comparable to a 100m race with each line representing a libeio request and EIO.wait being the
+finishing line / completion barrier. Each I/O operation may be scheduled on a different CPU core and will
+complete in parallel, proportional to the slowest request, with some minor overhead to boot.
+
+See the unit tests for further examples.
+
+== Configuration
+
+The thread pool can be configured for specific workloads. It's very important to schedule callback
+processing in small batches when integrating with an event loop to not block other work. Use
+EIO.max_poll_time and EIO.max_poll_request to restrict time spent or callbacks invoked per libeio
+notification.
+
+    # Set the maximum amount of time spent in each eio_poll() invocation
+    EIO.max_poll_time = 0.1
+
+    # Set the maximum number of requests by each eio_poll() invocation
+    EIO.max_poll_reqs = x
+
+Hundreds of threads can be spawned, however do note that stack sizes vary significantly between
+platforms and this will most definitely affect your memory footprint. The default pool size is 8
+threads.
+
+    # Set the minimum number of libeio threads to run in parallel. default: 8
+    EIO.min_parallel = x
+
+    # Set the maximum number of AIO threads to run in parallel. default: 8
+    EIO.max_parallel = x
+
+    # Limit the number of threads allowed to be idle
+    EIO.max_idle = x
+
+    # Set the minimum idle timeout before a thread is allowed to exit
+    EIO.idle_timeout = x
+
+== Visibility
+
+A simple API for integration with monitoring infrastructure's exposed as well. These stats may not be
+very insightful or even accurate for a small number of in flight requests.
+
+    # Number of requests currently in the ready, execute or pending states
+    EIO.requests
+
+    # Number of requests currently in the ready state (not yet executed)
+    EIO.ready
+
+    # Number of requests currently in the pending state
+    EIO.pending
+
+    # Number of worker threads spawned
+    EIO.threads
+
+== Managing requests
+
+Use the following methods for manually scheduling request processing.
+
+    # Read end of the pipe an event loop can monitor for readability
+    EIO.fd
+
+    # Called when pending requests need finishing. The amount of work done is controlled by
+    # EIO.max_poll_time and EIO.max_poll_requests
+    EIO.poll
+
+    # Drain / flush all pending requests. This method blocks until all requests have been processed,
+    # regardless of configuration constraints imposed on requests per EIO.poll invocation.
+    EIO.wait
+
+== Todo
+
+* Finer grained priority support, especially stacked open, read etc.
+* Grouped requests
+* Richer EIO::Request API
+* Implement and support all libeio wrapped syscalls
+* Better guidelines for optimal configuration and tuning
+
+== Contact, feedback and bugs
+
+This project is very much work in progress and I'm looking for guidance on API design, use cases and
+any outlier experiences. Please log bugs and suggestions at https://github.com/methodmissing/eio/issues
+
+Thanks !

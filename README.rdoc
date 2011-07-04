@@ -23,17 +23,18 @@ Ruby MRI 1.8 and 1.9.
 
 It's designed to run in a single threaded environment and libeio will manage a pool of OS threads,
 effectively scheduling out I/O ops across multiple cores. This is the same pattern very common in
-implementations of the Reactor pattern (Eventmachine) where I/O requests and callbacks are always
-submitted and handled on the reactor thread. This library thus naturally fits into event driven
-applications and exposes a file descriptor that can wake up an event loop when readable and execute
-callbacks for completed requests on the reactor thread as well.
+implementations of the Reactor Pattern (http://en.wikipedia.org/wiki/Reactor_pattern, Eventmachine) where
+I/O requests and callbacks are always submitted and handled on the reactor thread. This library thus
+naturally fits into event driven applications and exposes a file descriptor that can wake up an event
+loop when readable and execute callbacks for completed requests on the reactor thread as well.
 
-Event loop integration is however much closer to the Proactor pattern. The I/O multiplexer in a Reactor
-implementation merely notifies of file descriptor state changes - a handler is still responsible for
-reading or writing data on the reactor thread. Callbacks for file system and other blocking system calls
-wrapped by this library receive results as arguments - there's nothing else to do. In other words, the
-Reactor pattern asynchronously notify of state changes, but act on those synchronously, on the Reactor
-thread, which incurs some processing overhead.
+Event loop integration is however much closer to the Proactor Pattern (http://en.wikipedia.org/wiki/Proactor_pattern).
+The I/O multiplexer in a Reactor implementation merely notifies of file descriptor state changes - a
+handler is still responsible for reading or writing data on the reactor thread. Callbacks for file system
+and other blocking system calls wrapped by this library receive results as arguments - there's nothing
+else to do. Nothing to read, nothing to write, no system calls or other context switches. In other words,
+the Reactor pattern asynchronously notify of state changes, but act on those synchronously, on the
+Reactor thread, which incurs some processing overhead.
 
 In addition to wrapping known blocking system calls, libeio also expose several fallback implementations
 such as readahead, sendfile etc. and is also very effective with system calls that incur a lot of CPU
@@ -43,8 +44,8 @@ overhead managing user space buffers, memcpy etc.
 
 This library solves a specific problem of avoiding blocking I/O work on POSIX APIs that traditionally
 don't support the O_NONBLOCK flag or only have a synchronous interface defined. As with most event driven
-I/O, the goal is increased throughput and not necessarily a faster per request guarantee. The goal is to
-serve more clients with the same or less infrastructure without degrading quality of service.
+I/O, the goal is increased throughput and not necessarily a faster per request guarantee. To serve more
+clients with the same or less infrastructure without degrading quality of service.
 
 == Requirements
 
@@ -52,7 +53,27 @@ serve more clients with the same or less infrastructure without degrading qualit
 * Ruby MRI 1.8 or 1.9
 * Platform that supports the __VA_ARGS__ macro.
 * It's recommended to use this library in conjunction with an event loop
-* Best results with I/O bound work on disks / volumes with variable performance characteristics.
+* Best results with I/O bound work on disks / volumes with variable performance characteristics, such as
+  Amazon EBS.
+
+== Installation
+
+Rubygems installation
+
+    gem install eio
+
+Building from source
+
+    git clone git@github.com:methodmissing/eio.git
+    rake compile:eio_ext
+
+Running tests
+
+    rake test
+
+== Documentation
+
+See http://methodmissing.github.com/eio for RDOC documentation.
 
 == How to - with an event loop
 

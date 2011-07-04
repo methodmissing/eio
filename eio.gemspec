@@ -11,5 +11,6 @@ Gem::Specification.new do |s|
   s.extensions = FileList["ext/eio/extconf.rb"]
   s.files = `git ls-files`.split
   s.test_files = Dir['test/test_*.rb']
+  s.add_development_dependency('rake-compiler', '~> 0.7.7')
   s.add_development_dependency('eventmachine', '~> 0.12.3')
 end

@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.homepage = "http://github.com/methodmissing/eio"
   s.date = Time.now.utc.strftime('%Y-%m-%d')
   s.platform = Gem::Platform::RUBY
-  s.extensions = FileList["ext/eio/extconf.rb"]
+  s.extensions = Dir["ext/eio/extconf.rb"]
   s.files = `git ls-files`.split
   s.test_files = Dir['test/test_*.rb']
   s.add_development_dependency('rake-compiler', '~> 0.7.7')

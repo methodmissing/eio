@@ -1,8 +1,0 @@
-tmp/
-lib/eio_ext.*
-ext/libeio/config.log
-ext/libeio/.libs/
-ext/libeio/config.h.in~
-ext/libeio/eio.lo
-ext/libeio/eio.o
-ext/libeio/libeio.la

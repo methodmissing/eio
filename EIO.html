@@ -1,0 +1,2110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+
+  <title>Module: EIO</title>
+
+  <link rel="stylesheet" href="./rdoc.css" type="text/css" media="screen" />
+
+  <script src="./js/jquery.js" type="text/javascript" charset="utf-8"></script>
+  <script src="./js/thickbox-compressed.js" type="text/javascript" charset="utf-8"></script>
+  <script src="./js/quicksearch.js" type="text/javascript" charset="utf-8"></script>
+  <script src="./js/darkfish.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+<body id="top" class="module">
+
+  <div id="metadata">
+    <div id="home-metadata">
+      <div id="home-section" class="section">
+        <h3 class="section-header">
+          <a href="./index.html">Home</a>
+          <a href="./index.html#classes">Classes</a>
+          <a href="./index.html#methods">Methods</a>
+        </h3>
+      </div>
+    </div>
+
+    <div id="file-metadata">
+      <div id="file-list-section" class="section">
+        <h3 class="section-header">In Files</h3>
+        <div class="section-body">
+          <ul>
+          
+            <li><a href="./ext/eio/eio_ext_c.html?TB_iframe=true&amp;height=550&amp;width=785"
+              class="thickbox" title="ext/eio/eio_ext.c">ext/eio/eio_ext.c</a></li>
+          
+            <li><a href="./lib/eio_rb.html?TB_iframe=true&amp;height=550&amp;width=785"
+              class="thickbox" title="lib/eio.rb">lib/eio.rb</a></li>
+          
+            <li><a href="./lib/eio/eventmachine_rb.html?TB_iframe=true&amp;height=550&amp;width=785"
+              class="thickbox" title="lib/eio/eventmachine.rb">lib/eio/eventmachine.rb</a></li>
+          
+          </ul>
+        </div>
+      </div>
+
+      
+    </div>
+
+    <div id="class-metadata">
+      
+
+      
+
+      
+      <!-- Namespace Contents -->
+      <div id="namespace-list-section" class="section">
+        <h3 class="section-header">Namespace</h3>
+        <ul class="link-list">
+          
+          <li><span class="type">CLASS</span> <a href="EIO/Middleware.html">EIO::Middleware</a></li>
+          
+          <li><span class="type">CLASS</span> <a href="EIO/Request.html">EIO::Request</a></li>
+          
+        </ul>
+      </div>
+      
+
+      
+      <!-- Method Quickref -->
+      <div id="method-list-section" class="section">
+        <h3 class="section-header">Methods</h3>
+        <ul class="link-list">
+          
+          <li><a href="#method-c-chmod">::chmod</a></li>
+          
+          <li><a href="#method-c-chown">::chown</a></li>
+          
+          <li><a href="#method-c-close">::close</a></li>
+          
+          <li><a href="#method-c-eventmachine_handler">::eventmachine_handler</a></li>
+          
+          <li><a href="#method-c-fchmod">::fchmod</a></li>
+          
+          <li><a href="#method-c-fchown">::fchown</a></li>
+          
+          <li><a href="#method-c-fd">::fd</a></li>
+          
+          <li><a href="#method-c-fdatasync">::fdatasync</a></li>
+          
+          <li><a href="#method-c-fsync">::fsync</a></li>
+          
+          <li><a href="#method-c-ftruncate">::ftruncate</a></li>
+          
+          <li><a href="#method-c-idle_timeout-3D">::idle_timeout=</a></li>
+          
+          <li><a href="#method-c-link">::link</a></li>
+          
+          <li><a href="#method-c-max_idle-3D">::max_idle=</a></li>
+          
+          <li><a href="#method-c-max_parallel-3D">::max_parallel=</a></li>
+          
+          <li><a href="#method-c-max_poll_reqs-3D">::max_poll_reqs=</a></li>
+          
+          <li><a href="#method-c-max_poll_time-3D">::max_poll_time=</a></li>
+          
+          <li><a href="#method-c-min_parallel-3D">::min_parallel=</a></li>
+          
+          <li><a href="#method-c-mkdir">::mkdir</a></li>
+          
+          <li><a href="#method-c-open">::open</a></li>
+          
+          <li><a href="#method-c-pending">::pending</a></li>
+          
+          <li><a href="#method-c-poll">::poll</a></li>
+          
+          <li><a href="#method-c-read">::read</a></li>
+          
+          <li><a href="#method-c-readahead">::readahead</a></li>
+          
+          <li><a href="#method-c-readdir">::readdir</a></li>
+          
+          <li><a href="#method-c-readlink">::readlink</a></li>
+          
+          <li><a href="#method-c-ready">::ready</a></li>
+          
+          <li><a href="#method-c-rename">::rename</a></li>
+          
+          <li><a href="#method-c-requests">::requests</a></li>
+          
+          <li><a href="#method-c-rmdir">::rmdir</a></li>
+          
+          <li><a href="#method-c-sendfile">::sendfile</a></li>
+          
+          <li><a href="#method-c-stat">::stat</a></li>
+          
+          <li><a href="#method-c-symlink">::symlink</a></li>
+          
+          <li><a href="#method-c-threads">::threads</a></li>
+          
+          <li><a href="#method-c-truncate">::truncate</a></li>
+          
+          <li><a href="#method-c-unlink">::unlink</a></li>
+          
+          <li><a href="#method-c-wait">::wait</a></li>
+          
+          <li><a href="#method-c-write">::write</a></li>
+          
+        </ul>
+      </div>
+      
+
+      
+    </div>
+
+    <div id="project-metadata">
+      
+      
+      <div id="fileindex-section" class="section project-section">
+        <h3 class="section-header">Files</h3>
+        <ul>
+        
+          <li class="file"><a href="./README_rdoc.html">README.rdoc</a></li>
+        
+        </ul>
+      </div>
+      
+
+      <div id="classindex-section" class="section project-section">
+        <h3 class="section-header">Class/Module Index
+          <span class="search-toggle"><img src="./images/find.png"
+            height="16" width="16" alt="[+]"
+            title="show/hide quicksearch" /></span></h3>
+        <form action="#" method="get" accept-charset="utf-8" class="initially-hidden">
+        <fieldset>
+          <legend>Quicksearch</legend>
+          <input type="text" name="quicksearch" value=""
+            class="quicksearch-field" />
+        </fieldset>
+        </form>
+
+        <ul class="link-list">
+        
+          <li><a href="./EIO.html">EIO</a></li>
+        
+          <li><a href="./EIO/Middleware.html">EIO::Middleware</a></li>
+        
+          <li><a href="./EIO/Request.html">EIO::Request</a></li>
+        
+          <li><a href="./EM.html">EM</a></li>
+        
+          <li><a href="./EM/EioHandler.html">EM::EioHandler</a></li>
+        
+        </ul>
+        <div id="no-class-search-results" style="display: none;">No matching classes.</div>
+      </div>
+
+      
+    </div>
+  </div>
+
+  <div id="documentation">
+    <h1 class="module">EIO</h1>
+
+    <div id="description" class="description">
+      
+    </div><!-- description -->
+
+    
+    <div id="5Buntitled-5D" class="documentation-section">
+      
+
+      
+
+      
+      <!-- Constants -->
+      <div id="constants-list" class="section">
+        <h3 class="section-header">Constants</h3>
+        <dl>
+        
+          <dt><a name="APPEND">APPEND</a></dt>
+          
+          <dd class="description"></dd>
+          
+        
+          <dt><a name="CREAT">CREAT</a></dt>
+          
+          <dd class="description"></dd>
+          
+        
+          <dt><a name="EXCL">EXCL</a></dt>
+          
+          <dd class="description"></dd>
+          
+        
+          <dt><a name="PRI_DEFAULT">PRI_DEFAULT</a></dt>
+          
+          <dd class="description"></dd>
+          
+        
+          <dt><a name="PRI_MAX">PRI_MAX</a></dt>
+          
+          <dd class="description"></dd>
+          
+        
+          <dt><a name="PRI_MIN">PRI_MIN</a></dt>
+          
+          <dd class="description"></dd>
+          
+        
+          <dt><a name="RDONLY">RDONLY</a></dt>
+          
+          <dd class="description"></dd>
+          
+        
+          <dt><a name="RDWR">RDWR</a></dt>
+          
+          <dd class="description"></dd>
+          
+        
+          <dt><a name="VERSION">VERSION</a></dt>
+          
+          <dd class="description"></dd>
+          
+        
+          <dt><a name="WRONLY">WRONLY</a></dt>
+          
+          <dd class="description"></dd>
+          
+        
+        </dl>
+      </div>
+      
+
+      
+
+      <!-- Methods -->
+      
+      <div id="public-class-method-details" class="method-section section">
+        <h3 class="section-header">Public Class Methods</h3>
+
+      
+        <div id="chmod-method" class="method-detail ">
+          <a name="method-c-chmod"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">chmod('/path/file'){ p :chmodded }        =>  EIO::Request</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <pre>Asynchronously change permissions for a given file path.</pre>
+
+<h3>Examples</h3>
+
+<pre>EIO.chmod('/path/file', 0777){ p :chmodded }  =&gt;  EIO::Request
+cb = Proc.new{ p :chmodded }
+EIO.chmod('/path/file', 0777, cb)             =&gt;  EIO::Request
+
+EIO.chmod('/path/file')                       =&gt;  Fixnum
+EIO.chmod('/path/file', 0777)                 =&gt;  Fixnum</pre>
+            
+
+            
+            <div class="method-source-code" id="chmod-source">
+<pre>
+static VALUE
+rb_eio_s_chmod(int argc, VALUE *argv, VALUE eio)
+{
+    int ret;
+    VALUE path, mode, proc, cb;
+    rb_scan_args(argc, argv, &quot;12&amp;&quot;, &amp;path, &amp;mode, &amp;proc, &amp;cb);
+    AssertCallback(cb, NO_CB_ARGS);
+    Check_Type(path, T_STRING);
+    if (NIL_P(mode)) mode = eio_default_mode;
+    Check_Type(mode, T_FIXNUM);
+    SubmitRequest(chmod, rb_eio_generic_cb, StringValueCStr(path), FIX2INT(mode));
+}</pre>
+            </div><!-- chmod-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- chmod-method -->
+
+      
+        <div id="chown-method" class="method-detail ">
+          <a name="method-c-chown"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">chown('/path/file'){ p :chowned }            =>  EIO::Request</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <pre>Asynchronously changes ownership for a given file path.</pre>
+
+<h3>Examples</h3>
+
+<pre>EIO.chown('/path/file', 500){ p :chowned }       =&gt;  EIO::Request
+EIO.chown('/path/file', 500, 500){ p :chowned }  =&gt;  EIO::Request
+cb = Proc.new{ p :chowned }
+EIO.chown('/path/file', 500, 500, cb)            =&gt;  EIO::Request
+
+EIO.chown('/path/file', 500)                     =&gt;  Fixnum
+EIO.chown('/path/file', 500, 500)                =&gt;  Fixnum</pre>
+            
+
+            
+            <div class="method-source-code" id="chown-source">
+<pre>
+static VALUE
+rb_eio_s_chown(int argc, VALUE *argv, VALUE eio)
+{
+    int ret;
+    VALUE path, uid, gid, proc, cb;
+    rb_scan_args(argc, argv, &quot;13&amp;&quot;, &amp;path, &amp;uid, &amp;gid, &amp;proc, &amp;cb);
+    AssertCallback(cb, NO_CB_ARGS);
+    Check_Type(path, T_STRING);
+    if (NIL_P(uid)) uid = INT2NUM(getuid());
+    Check_Type(uid, T_FIXNUM);
+    if (NIL_P(gid)) gid = INT2NUM(getgid());
+    Check_Type(gid, T_FIXNUM);
+    SubmitRequest(chown, rb_eio_generic_cb, StringValueCStr(path), FIX2INT(uid), FIX2INT(gid));
+}</pre>
+            </div><!-- chown-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- chown-method -->
+
+      
+        <div id="close-method" class="method-detail ">
+          <a name="method-c-close"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">close(fd){ p :closed }  =>  EIO::Request</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <pre>Asynchronously close a file and call the callback with the result code.</pre>
+
+<h3>Examples</h3>
+
+<pre>cb = Proc.new{ p :closed }
+EIO.close(fd, cb)           =&gt;  EIO::Request
+
+EIO.close(fd)               =&gt;  Fixnum</pre>
+            
+
+            
+            <div class="method-source-code" id="close-source">
+<pre>
+static VALUE
+rb_eio_s_close(int argc, VALUE *argv, VALUE eio)
+{
+    int ret;
+    VALUE fd, proc, cb;
+    rb_scan_args(argc, argv, &quot;11&amp;&quot;, &amp;fd, &amp;proc, &amp;cb);
+    AssertCallback(cb, NO_CB_ARGS);
+    Check_Type(fd, T_FIXNUM);
+    SubmitRequest(close, rb_eio_generic_cb, FIX2INT(fd));
+}</pre>
+            </div><!-- close-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- close-method -->
+
+      
+        <div id="eventmachine_handler-method" class="method-detail ">
+          <a name="method-c-eventmachine_handler"></a>
+
+          
+          <div class="method-heading">
+            <span class="method-name">eventmachine_handler</span><span
+              class="method-args">()</span>
+            <span class="method-click-advice">click to toggle source</span>
+          </div>
+          
+
+          <div class="method-description">
+            
+            <p>Registers the read end of a pipe with Eventmachine which wakes up the event
+loop whenever there’s results to process.</p>
+            
+
+            
+            <div class="method-source-code" id="eventmachine_handler-source">
+<pre>
+<span class="ruby-comment"># File lib/eio/eventmachine.rb, line 20</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">eventmachine_handler</span>
+  <span class="ruby-constant">EM</span>.<span class="ruby-identifier">watch</span>(<span class="ruby-constant">EIO</span>.<span class="ruby-identifier">fd</span>, <span class="ruby-constant">EM</span><span class="ruby-operator">::</span><span class="ruby-constant">EioHandler</span>){ <span class="ruby-operator">|</span><span class="ruby-identifier">c</span><span class="ruby-operator">|</span> <span class="ruby-identifier">c</span>.<span class="ruby-identifier">notify_readable</span> = <span class="ruby-keyword">true</span> }
+<span class="ruby-keyword">end</span></pre>
+            </div><!-- eventmachine_handler-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- eventmachine_handler-method -->
+
+      
+        <div id="fchmod-method" class="method-detail ">
+          <a name="method-c-fchmod"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">fchmod(fd){ p :chmodded }        =>  EIO::Request</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <pre>Asynchronously change ownership for a given file descriptor.</pre>
+
+<h3>Examples</h3>
+
+<pre>EIO.fchmod(fd, 0777){ p :chmodded }  =&gt;  EIO::Request
+cb = Proc.new{ p :chmodded }
+EIO.fchmod(fd, 0777, cb)             =&gt;  EIO::Request
+
+EIO.fchmod(fd)                       =&gt;  Fixnum
+EIO.fchmod(fd, 0777)                 =&gt;  Fixnum</pre>
+            
+
+            
+            <div class="method-source-code" id="fchmod-source">
+<pre>
+static VALUE
+rb_eio_s_fchmod(int argc, VALUE *argv, VALUE eio)
+{
+    int ret;
+    VALUE fd, mode, proc, cb;
+    rb_scan_args(argc, argv, &quot;12&amp;&quot;, &amp;fd, &amp;mode, &amp;proc, &amp;cb);
+    AssertCallback(cb, NO_CB_ARGS);
+    Check_Type(fd, T_FIXNUM);
+    if (NIL_P(mode)) mode = eio_default_mode;
+    Check_Type(mode, T_FIXNUM);
+    SubmitRequest(fchmod, rb_eio_generic_cb, FIX2INT(fd), FIX2INT(mode));
+}</pre>
+            </div><!-- fchmod-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- fchmod-method -->
+
+      
+        <div id="fchown-method" class="method-detail ">
+          <a name="method-c-fchown"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">fchown(fd){ p :chowned }            =>  EIO::Request</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <pre>Asynchronously changes ownership for a given file descriptor.</pre>
+
+<h3>Examples</h3>
+
+<pre>EIO.fchown(fd, 500){ p :chowned }       =&gt;  EIO::Request
+EIO.fchown(fd, 500, 500){ p :chowned }  =&gt;  EIO::Request
+cb = Proc.new{ p :chowned }
+EIO.fchown(fd, 500, 500, cb)            =&gt;  EIO::Request
+
+EIO.fchown(fd, 500)                     =&gt;  Fixnum
+EIO.fchown(fd, 500, 500)                =&gt;  Fixnum</pre>
+            
+
+            
+            <div class="method-source-code" id="fchown-source">
+<pre>
+static VALUE
+rb_eio_s_fchown(int argc, VALUE *argv, VALUE eio)
+{
+    int ret;
+    VALUE fd, uid, gid, proc, cb;
+    rb_scan_args(argc, argv, &quot;13&amp;&quot;, &amp;fd, &amp;uid, &amp;gid, &amp;proc, &amp;cb);
+    AssertCallback(cb, NO_CB_ARGS);
+    Check_Type(fd, T_FIXNUM);
+    if (NIL_P(uid)) uid = INT2NUM(getuid());
+    Check_Type(uid, T_FIXNUM);
+    if (NIL_P(gid)) gid = INT2NUM(getgid());
+    Check_Type(gid, T_FIXNUM);
+    SubmitRequest(fchown, rb_eio_generic_cb, FIX2INT(fd), FIX2INT(uid), FIX2INT(gid));
+}</pre>
+            </div><!-- fchown-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- fchown-method -->
+
+      
+        <div id="fd-method" class="method-detail ">
+          <a name="method-c-fd"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">fd                 =>  Fixnum</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <p>Read end of the pipe an event loop can monitor for readability</p>
+            
+
+            
+            <div class="method-source-code" id="fd-source">
+<pre>
+static VALUE
+rb_eio_s_fd(VALUE eio)
+{
+    return INT2NUM(eio_pipe_r_fd);
+}</pre>
+            </div><!-- fd-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- fd-method -->
+
+      
+        <div id="fdatasync-method" class="method-detail ">
+          <a name="method-c-fdatasync"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">fdatasync(fd){ p :synced }  =>  EIO::Request</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <pre>Asynchronously call fdatasync on the given filehandle and call the callback with the result
+code.</pre>
+
+<h3>Examples</h3>
+
+<pre>cb = Proc.new{ p :synced }
+EIO.fdatasync(fd, cb)           =&gt;  EIO::Request
+
+EIO.fdatasync(fd)               =&gt;  Fixnum</pre>
+            
+
+            
+            <div class="method-source-code" id="fdatasync-source">
+<pre>
+static VALUE
+rb_eio_s_fdatasync(int argc, VALUE *argv, VALUE eio)
+{
+    int ret;
+    VALUE fd, proc, cb;
+    rb_scan_args(argc, argv, &quot;11&amp;&quot;, &amp;fd, &amp;proc, &amp;cb);
+    AssertCallback(cb, NO_CB_ARGS);
+    Check_Type(fd, T_FIXNUM);
+    SyncRequest({
+#if HAVE_FDATASYNC
+       ret = fdatasync(FIX2INT(fd));
+#else
+       ret = fsync(FIX2INT(fd));
+#endif
+       if (ret == -1) rb_sys_fail(&quot;fdatasync&quot;);
+       return INT2NUM(ret);
+    });
+    AsyncRequest(fdatasync, rb_eio_generic_cb, FIX2INT(fd));
+}</pre>
+            </div><!-- fdatasync-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- fdatasync-method -->
+
+      
+        <div id="fsync-method" class="method-detail ">
+          <a name="method-c-fsync"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">fsync(fd){ p :synced }  =>  EIO::Request</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <pre>Asynchronously call fsync on the given filehandle and call the callback with the result
+code.</pre>
+
+<h3>Examples</h3>
+
+<pre>cb = Proc.new{ p :synced }
+EIO.fsync(fd, cb)           =&gt;  EIO::Request
+
+EIO.fsync(fd)               =&gt;  Fixnum</pre>
+            
+
+            
+            <div class="method-source-code" id="fsync-source">
+<pre>
+static VALUE
+rb_eio_s_fsync(int argc, VALUE *argv, VALUE eio)
+{
+    int ret;
+    VALUE fd, proc, cb;
+    rb_scan_args(argc, argv, &quot;11&amp;&quot;, &amp;fd, &amp;proc, &amp;cb);
+    AssertCallback(cb, NO_CB_ARGS);
+    Check_Type(fd, T_FIXNUM);
+    SubmitRequest(fsync, rb_eio_generic_cb, FIX2INT(fd));
+}</pre>
+            </div><!-- fsync-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- fsync-method -->
+
+      
+        <div id="ftruncate-method" class="method-detail ">
+          <a name="method-c-ftruncate"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">ftruncate(fd){ p :truncated }       =>  EIO::Request</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <pre>Asynchronously truncates a given file descriptor.</pre>
+
+<h3>Examples</h3>
+
+<pre>EIO.ftruncate(fd, 100){ p :truncated }  =&gt;  EIO::Request
+cb = Proc.new{ p :truncated }
+EIO.ftruncate(fd, 100, cb)              =&gt;  EIO::Request
+
+EIO.ftruncate(fd)                       =&gt;  Fixnum
+EIO.ftruncate(fd, 100)                  =&gt;  Fixnum</pre>
+            
+
+            
+            <div class="method-source-code" id="ftruncate-source">
+<pre>
+static VALUE
+rb_eio_s_ftruncate(int argc, VALUE *argv, VALUE eio)
+{
+    int ret;
+    VALUE fd, offset, proc, cb;
+    rb_scan_args(argc, argv, &quot;12&amp;&quot;, &amp;fd, &amp;offset, &amp;proc, &amp;cb);
+    AssertCallback(cb, NO_CB_ARGS);
+    Check_Type(fd, T_FIXNUM);
+    if (NIL_P(offset)) offset = eio_zero;
+    Check_Type(offset, T_FIXNUM);
+    SubmitRequest(ftruncate, rb_eio_generic_cb, FIX2INT(fd), FIX2INT(offset));
+}</pre>
+            </div><!-- ftruncate-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- ftruncate-method -->
+
+      
+        <div id="idle_timeout-3D-method" class="method-detail ">
+          <a name="method-c-idle_timeout-3D"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">idle_timeout = x                 =>  Fixnum</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <p>Set the minimum idle timeout before a thread is allowed to exit</p>
+            
+
+            
+            <div class="method-source-code" id="idle_timeout-3D-source">
+<pre>
+static VALUE
+rb_eio_s_set_idle_timeout(VALUE eio, VALUE seconds)
+{
+    eio_set_idle_timeout(FIX2INT(seconds));
+    return seconds;
+}</pre>
+            </div><!-- idle_timeout-3D-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- idle_timeout-3D-method -->
+
+      
+        <div id="link-method" class="method-detail ">
+          <a name="method-c-link"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">link('/path/a', '/path/b'){ p :linked }  =>  EIO::Request</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <pre>Asynchronously create a new link to the existing object at source path at the destination
+path and call the callback with the result code.</pre>
+
+<h3>Examples</h3>
+
+<pre>cb = Proc.new{ p :linked }
+EIO.link('/path/a', '/path/b', cb)           =&gt;  EIO::Request
+
+EIO.link('/path/a', '/path/b')               =&gt;  Fixnum</pre>
+            
+
+            
+            <div class="method-source-code" id="link-source">
+<pre>
+static VALUE
+rb_eio_s_link(int argc, VALUE *argv, VALUE eio)
+{
+    int ret;
+    VALUE path, new_path, proc, cb;
+    rb_scan_args(argc, argv, &quot;21&amp;&quot;, &amp;path, &amp;new_path, &amp;proc, &amp;cb);
+    AssertCallback(cb, NO_CB_ARGS);
+    Check_Type(path, T_STRING);
+    Check_Type(new_path, T_STRING);
+    SubmitRequest(link, rb_eio_generic_cb, StringValueCStr(path), StringValueCStr(new_path));
+}</pre>
+            </div><!-- link-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- link-method -->
+
+      
+        <div id="max_idle-3D-method" class="method-detail ">
+          <a name="method-c-max_idle-3D"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">max_idle = x                 =>  Fixnum</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <p>Limit the number of threads allowed to be idle</p>
+            
+
+            
+            <div class="method-source-code" id="max_idle-3D-source">
+<pre>
+static VALUE
+rb_eio_s_set_max_idle(VALUE eio, VALUE threads)
+{
+    eio_set_max_idle(FIX2INT(threads));
+    return threads;
+}</pre>
+            </div><!-- max_idle-3D-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- max_idle-3D-method -->
+
+      
+        <div id="max_parallel-3D-method" class="method-detail ">
+          <a name="method-c-max_parallel-3D"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">max_parallel = x                 =>  Fixnum</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <p>Set the maximum number of AIO threads to run in parallel. default: 8</p>
+            
+
+            
+            <div class="method-source-code" id="max_parallel-3D-source">
+<pre>
+static VALUE
+rb_eio_s_set_max_parallel(VALUE eio, VALUE threads)
+{
+    eio_set_max_parallel(FIX2INT(threads));
+    return threads;
+}</pre>
+            </div><!-- max_parallel-3D-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- max_parallel-3D-method -->
+
+      
+        <div id="max_poll_reqs-3D-method" class="method-detail ">
+          <a name="method-c-max_poll_reqs-3D"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">max_poll_reqs = x                 =>  Fixnum</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <p>Set the maximum number of requests by each eio_poll() invocation</p>
+            
+
+            
+            <div class="method-source-code" id="max_poll_reqs-3D-source">
+<pre>
+static VALUE
+rb_eio_s_set_max_poll_reqs(VALUE eio, VALUE requests)
+{
+    eio_set_max_poll_reqs(FIX2INT(requests));
+    return requests;
+}</pre>
+            </div><!-- max_poll_reqs-3D-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- max_poll_reqs-3D-method -->
+
+      
+        <div id="max_poll_time-3D-method" class="method-detail ">
+          <a name="method-c-max_poll_time-3D"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">max_poll_time = x                 =>  Fixnum</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <p>Set the maximum amount of time spent in each eio_poll() invocation</p>
+            
+
+            
+            <div class="method-source-code" id="max_poll_time-3D-source">
+<pre>
+static VALUE
+rb_eio_s_set_max_poll_time(VALUE eio, VALUE seconds)
+{
+    eio_set_max_poll_time(FIX2LONG(seconds));
+    return seconds;
+}</pre>
+            </div><!-- max_poll_time-3D-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- max_poll_time-3D-method -->
+
+      
+        <div id="min_parallel-3D-method" class="method-detail ">
+          <a name="method-c-min_parallel-3D"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">min_parallel = x                 =>  Fixnum</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <p>Set the minimum number of libeio threads to run in parallel. default: 8</p>
+            
+
+            
+            <div class="method-source-code" id="min_parallel-3D-source">
+<pre>
+static VALUE
+rb_eio_s_set_min_parallel(VALUE eio, VALUE threads)
+{
+    eio_set_min_parallel(FIX2INT(threads));
+    return threads;
+}</pre>
+            </div><!-- min_parallel-3D-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- min_parallel-3D-method -->
+
+      
+        <div id="mkdir-method" class="method-detail ">
+          <a name="method-c-mkdir"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">mkdir('/path'){ p :created }         =>  EIO::Request</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <pre>Asynchronously mkdir (create) a directory and call the callback with the result code.</pre>
+
+<h3>Examples</h3>
+
+<pre>EIO.mkdir('/path', 0777){ p :created }   =&gt;  EIO::Request
+cb = Proc.new{ p :created }
+EIO.mkdir('/path', 0777, cb)             =&gt;  EIO::Request
+
+EIO.mkdir('/path')                       =&gt;  Fixnum
+EIO.mkdir('/path', 0777)                 =&gt;  Fixnum</pre>
+            
+
+            
+            <div class="method-source-code" id="mkdir-source">
+<pre>
+static VALUE
+rb_eio_s_mkdir(int argc, VALUE *argv, VALUE eio)
+{
+    int ret;
+    VALUE path, mode, proc, cb;
+    rb_scan_args(argc, argv, &quot;12&amp;&quot;, &amp;path, &amp;mode, &amp;proc, &amp;cb);
+    AssertCallback(cb, NO_CB_ARGS);
+    Check_Type(path, T_STRING);
+    if (NIL_P(mode)) mode = eio_default_mode;
+    Check_Type(mode, T_FIXNUM);
+    SubmitRequest(mkdir, rb_eio_generic_cb, StringValueCStr(path), FIX2INT(mode));
+}</pre>
+            </div><!-- mkdir-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- mkdir-method -->
+
+      
+        <div id="open-method" class="method-detail ">
+          <a name="method-c-open"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">open('/path/file'){|fd| p fd }                    =>  EIO::Request</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <pre>Asynchronously open or create a file and call the callback with a newly created file handle
+for the file.</pre>
+
+<h3>Examples</h3>
+
+<pre>EIO.open('/path/file', EIO::RDONLY){|fd| p fd }       =&gt;  EIO::Request
+EIO.open('/path/file', EIO::RDWR, 0777){|fd| p fd }   =&gt;  EIO::Request
+cb = Proc.new{|fd| p fd }
+EIO.open('/path/file', EIO::RDWR, 0777, cb)           =&gt;  EIO::Request
+
+EIO.open('/path/file')                                =&gt;  Fixnum
+EIO.open('/path/file', EIO::RDWR)                     =&gt;  Fixnum
+EIO.open('/path/file', EIO::RDWR, 0777)               =&gt;  Fixnum</pre>
+            
+
+            
+            <div class="method-source-code" id="open-source">
+<pre>
+static VALUE
+rb_eio_s_open(int argc, VALUE *argv, VALUE eio)
+{
+    int ret;
+    VALUE path, flags, mode, proc, cb;
+    rb_scan_args(argc, argv, &quot;13&amp;&quot;, &amp;path, &amp;flags, &amp;mode, &amp;proc, &amp;cb);
+    AssertCallback(cb, 1);
+    Check_Type(path, T_STRING);
+    if (NIL_P(flags)) flags = INT2NUM(O_RDONLY);
+    Check_Type(flags, T_FIXNUM);
+    if (NIL_P(mode)) mode = eio_default_mode;
+    Check_Type(mode, T_FIXNUM);
+    SubmitRequest(open, rb_eio_open_cb, StringValueCStr(path), FIX2INT(flags), FIX2INT(mode));
+}</pre>
+            </div><!-- open-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- open-method -->
+
+      
+        <div id="pending-method" class="method-detail ">
+          <a name="method-c-pending"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">pending                 =>  Fixnum</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <p>Number of requests currently in the pending state</p>
+            
+
+            
+            <div class="method-source-code" id="pending-source">
+<pre>
+static VALUE
+rb_eio_s_pending(VALUE eio)
+{
+    return INT2NUM(eio_npending());
+}</pre>
+            </div><!-- pending-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- pending-method -->
+
+      
+        <div id="poll-method" class="method-detail ">
+          <a name="method-c-poll"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">poll                    =>  Fixnum</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <p>Called when pending requests need finishing</p>
+            
+
+            
+            <div class="method-source-code" id="poll-source">
+<pre>
+static VALUE
+rb_eio_s_poll(VALUE eio)
+{
+    int res;
+    res = eio_poll();
+    if (res &gt; 0) rb_sys_fail(&quot;eio_poll&quot;);
+    return INT2NUM(res);
+}</pre>
+            </div><!-- poll-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- poll-method -->
+
+      
+        <div id="read-method" class="method-detail ">
+          <a name="method-c-read"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">read(fd){|d| p d }           =>  EIO::Request</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <pre>Asynchronously reads length bytes from a specified offset into a buffer.</pre>
+
+<h3>Examples</h3>
+
+<pre>EIO.read(fd, 100){|d| p d }      =&gt;  EIO::Request
+EIO.read(fd, 100, 50){|d| p d }  =&gt;  EIO::Request
+cb = Proc.new{|d| p d }
+EIO.read(fd, 100, 50, cb)        =&gt;  EIO::Request
+
+EIO.read(fd)                     =&gt;  String
+EIO.read(fd, 100)                =&gt;  String
+EIO.read(fd, 100, 50)            =&gt;  String</pre>
+            
+
+            
+            <div class="method-source-code" id="read-source">
+<pre>
+static VALUE
+rb_eio_s_read(int argc, VALUE *argv, VALUE eio)
+{
+    int ret;
+    VALUE fd, len, offset, proc, cb;
+    VALUE buf;
+    rb_scan_args(argc, argv, &quot;13&amp;&quot;, &amp;fd, &amp;len, &amp;offset, &amp;proc, &amp;cb);
+    AssertCallback(cb, 1);
+    Check_Type(fd, T_FIXNUM);
+    if (NIL_P(len)) len = eio_default_bufsize;
+    Check_Type(len, T_FIXNUM);
+    if (len == eio_zero) len = eio_default_bufsize;
+    if (NIL_P(offset)) offset = eio_zero;
+    Check_Type(offset, T_FIXNUM);
+    SyncRequest({
+        buf = rb_str_new(0, FIX2INT(len));
+        if (offset == eio_zero){
+            ret = read(FIX2INT(fd), RSTRING_PTR(buf), FIX2INT(len));
+        } else {
+            ret = pread(FIX2INT(fd), RSTRING_PTR(buf), FIX2INT(len), FIX2INT(offset));
+        }
+        if (ret == -1) rb_sys_fail(&quot;read&quot;);
+        return buf;
+    });
+    AsyncRequest(read, rb_eio_read_cb, FIX2INT(fd), 0, FIX2INT(len), FIX2INT(offset));
+}</pre>
+            </div><!-- read-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- read-method -->
+
+      
+        <div id="readahead-method" class="method-detail ">
+          <a name="method-c-readahead"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">readahead(fd){|d| p :read }        =>  EIO::Request</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <pre>Populates the page cache with data from a file so that subsequent reads from that file will
+not block on disk I/O.</pre>
+
+<h3>Examples</h3>
+
+<pre>EIO.readahead(fd, 100){|d| p :read }   =&gt;  EIO::Request
+EIO.readahead(fd, 100, 50){ p :read }  =&gt;  EIO::Request
+cb = Proc.new{ p :read }
+EIO.readahead(fd, 100, 50, cb)         =&gt;  EIO::Request
+
+EIO.readahead(fd)                      =&gt;  Fixnum
+EIO.readahead(fd, 100)                 =&gt;  Fixnum
+EIO.readahead(fd, 100, 50)             =&gt;  Fixnum</pre>
+            
+
+            
+            <div class="method-source-code" id="readahead-source">
+<pre>
+static VALUE
+rb_eio_s_readahead(int argc, VALUE *argv, VALUE eio)
+{
+    int ret;
+    VALUE fd, len, offset, proc, cb;
+    rb_scan_args(argc, argv, &quot;13&amp;&quot;, &amp;fd, &amp;len, &amp;offset, &amp;proc, &amp;cb);
+    AssertCallback(cb, NO_CB_ARGS);
+    Check_Type(fd, T_FIXNUM);
+    if (NIL_P(len)) len = eio_default_bufsize;
+    Check_Type(len, T_FIXNUM);
+    if (len == eio_zero) len = eio_default_bufsize;
+    if (NIL_P(offset)) offset = eio_zero;
+    Check_Type(offset, T_FIXNUM);
+    SubmitRequest(readahead, rb_eio_generic_cb, FIX2INT(fd), FIX2INT(offset), FIX2INT(len));
+}</pre>
+            </div><!-- readahead-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- readahead-method -->
+
+      
+        <div id="readdir-method" class="method-detail ">
+          <a name="method-c-readdir"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">readdir('/path'){|fs| p fs }   =>  EIO::Request</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <pre>Unlike the POSIX call of the same name, aio_readdir reads an entire directory (i.e.
+opendir + readdir + closedir). The entries will not be sorted, and will NOT include the
+. and .. entries.</pre>
+
+<h3>Examples</h3>
+
+<pre>cb = Proc.new{|b| p b }
+EIO.readdir('/path', cb)           =&gt;  EIO::Request
+
+EIO.readdir('/path')               =&gt;  Array</pre>
+            
+
+            
+            <div class="method-source-code" id="readdir-source">
+<pre>
+static VALUE
+rb_eio_s_readdir(int argc, VALUE *argv, VALUE eio)
+{
+    int ret;
+    VALUE path, proc, cb;
+    VALUE files;
+    char *name;
+    struct dirent *ent;
+    rb_scan_args(argc, argv, &quot;11&amp;&quot;, &amp;path, &amp;proc, &amp;cb);
+    AssertCallback(cb, 1);
+    Check_Type(path, T_STRING);
+    SyncRequest({
+        DIR *dir = opendir(StringValueCStr(path));
+        if (!dir) rb_sys_fail(StringValueCStr(path));
+
+        files = rb_ary_new();
+
+        while ((ent = readdir(dir))) {
+          name = ent-&gt;d_name;
+          if (name[0] != '.' || (name[1] &amp;&amp; (name[1] != '.' || name[2]))) {
+              rb_ary_push(files, rb_str_new2(name));
+          }
+        }
+        ret = closedir(dir);
+        if (ret == -1) rb_sys_fail(&quot;closedir&quot;);
+        return(files);
+    });
+    AsyncRequest(readdir, rb_eio_readdir_cb, StringValueCStr(path), EIO_READDIR_STAT_ORDER);
+}</pre>
+            </div><!-- readdir-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- readdir-method -->
+
+      
+        <div id="readlink-method" class="method-detail ">
+          <a name="method-c-readlink"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">readlink('/path/link'){|l| p l }   =>  EIO::Request</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <pre>Asynchronously read the symlink specified by path and pass it to the callback.</pre>
+
+<h3>Examples</h3>
+
+<pre>cb = Proc.new{|l| p l }
+EIO.readlink('/path/link', cb)         =&gt;  EIO::Request
+
+EIO.readlink('/path/link')             =&gt;  Fixnum</pre>
+            
+
+            
+            <div class="method-source-code" id="readlink-source">
+<pre>
+static VALUE
+rb_eio_s_readlink(int argc, VALUE *argv, VALUE eio)
+{
+    int ret;
+    VALUE path, proc, cb;
+    rb_scan_args(argc, argv, &quot;11&amp;&quot;, &amp;path, &amp;proc, &amp;cb);
+    AssertCallback(cb, 1);
+    Check_Type(path, T_STRING);
+    SyncRequest({
+        return rb_funcall(rb_cFile, sym_readlink, 1, path);
+    });
+    AsyncRequest(readlink, rb_eio_read_cb, StringValueCStr(path));
+}</pre>
+            </div><!-- readlink-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- readlink-method -->
+
+      
+        <div id="ready-method" class="method-detail ">
+          <a name="method-c-ready"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">ready                 =>  Fixnum</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <p>Number of requests currently in the ready state (not yet executed)</p>
+            
+
+            
+            <div class="method-source-code" id="ready-source">
+<pre>
+static VALUE
+rb_eio_s_ready(VALUE eio)
+{
+    return INT2NUM(eio_nready());
+}</pre>
+            </div><!-- ready-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- ready-method -->
+
+      
+        <div id="rename-method" class="method-detail ">
+          <a name="method-c-rename"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">rename('/path/a', '/path/b'){ p :renamed }  =>  EIO::Request</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <pre>Asynchronously rename the object at source path to destination path</pre>
+
+<h3>Examples</h3>
+
+<pre>cb = Proc.new{ p :renamed }
+EIO.rename('/path/a', '/path/b', cb)            =&gt;  EIO::Request
+
+EIO.rename('/path/a', '/path/b')                =&gt;  Fixnum</pre>
+            
+
+            
+            <div class="method-source-code" id="rename-source">
+<pre>
+static VALUE
+rb_eio_s_rename(int argc, VALUE *argv, VALUE eio)
+{
+    int ret;
+    VALUE path, new_path, proc, cb;
+    rb_scan_args(argc, argv, &quot;21&amp;&quot;, &amp;path, &amp;new_path, &amp;proc, &amp;cb);
+    AssertCallback(cb, NO_CB_ARGS);
+    Check_Type(path, T_STRING);
+    Check_Type(new_path, T_STRING);
+    SubmitRequest(rename, rb_eio_generic_cb, StringValueCStr(path), StringValueCStr(new_path));
+}</pre>
+            </div><!-- rename-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- rename-method -->
+
+      
+        <div id="requests-method" class="method-detail ">
+          <a name="method-c-requests"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">requests                 =>  Fixnum</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <p>Number of requests currently in the ready, execute or pending states</p>
+            
+
+            
+            <div class="method-source-code" id="requests-source">
+<pre>
+static VALUE
+rb_eio_s_requests(VALUE eio)
+{
+    return INT2NUM(eio_nreqs());
+}</pre>
+            </div><!-- requests-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- requests-method -->
+
+      
+        <div id="rmdir-method" class="method-detail ">
+          <a name="method-c-rmdir"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">rmdir('/path'){ p :removed }   =>  EIO::Request</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <pre>Asynchronously rmdir (delete) a directory and call the callback with the result code.</pre>
+
+<h3>Examples</h3>
+
+<pre>cb = Proc.new{ p :removed }
+EIO.rmdir('/path', cb)             =&gt;  EIO::Request
+
+EIO.rmdir('/path')                 =&gt;  Fixnum</pre>
+            
+
+            
+            <div class="method-source-code" id="rmdir-source">
+<pre>
+static VALUE
+rb_eio_s_rmdir(int argc, VALUE *argv, VALUE eio)
+{
+    int ret;
+    VALUE path, proc, cb;
+    rb_scan_args(argc, argv, &quot;11&amp;&quot;, &amp;path, &amp;proc, &amp;cb);
+    AssertCallback(cb, NO_CB_ARGS);
+    Check_Type(path, T_STRING);
+    SubmitRequest(rmdir, rb_eio_generic_cb, StringValueCStr(path));
+}</pre>
+            </div><!-- rmdir-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- rmdir-method -->
+
+      
+        <div id="sendfile-method" class="method-detail ">
+          <a name="method-c-sendfile"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">sendfile(in_fd, out_fd){|b| p b }           =>  EIO::Request</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <pre>Tries to copy length bytes from in fd to out fd, starting at a given offset.</pre>
+
+<h3>Examples</h3>
+
+<pre>EIO.sendfile(in_fd, out_fd, 100){|b| p b }      =&gt;  EIO::Request
+EIO.sendfile(in_fd, out_fd, 100, 50){|b| p b }  =&gt;  EIO::Request
+cb = Proc.new{|b| p b }
+EIO.sendfile(in_fd, out_fd, 100, 50, cb)        =&gt;  EIO::Request
+
+EIO.sendfile(in_fd, out_fd)                     =&gt;  Fixnum
+EIO.sendfile(in_fd, out_fd, 100)                =&gt;  Fixnum
+EIO.sendfile(in_fd, out_fd, 100, 50)            =&gt;  Fixnum</pre>
+            
+
+            
+            <div class="method-source-code" id="sendfile-source">
+<pre>
+static VALUE
+rb_eio_s_sendfile(int argc, VALUE *argv, VALUE eio)
+{
+    int ret;
+    VALUE out_fd, in_fd, offset, len, proc, cb;
+    rb_scan_args(argc, argv, &quot;23&amp;&quot;, &amp;out_fd, &amp;in_fd, &amp;offset, &amp;len, &amp;proc, &amp;cb);
+    AssertCallback(cb, 1);
+    Check_Type(in_fd, T_FIXNUM);
+    Check_Type(out_fd, T_FIXNUM);
+    if (NIL_P(len)) len = eio_default_bufsize;
+    Check_Type(len, T_FIXNUM);
+    if (len == eio_zero) len = eio_default_bufsize;
+    if (NIL_P(offset)) offset = eio_zero;
+    Check_Type(offset, T_FIXNUM);
+    SubmitRequest(sendfile, rb_eio_write_cb, FIX2INT(out_fd), FIX2INT(in_fd), FIX2INT(offset), FIX2INT(len));
+}</pre>
+            </div><!-- sendfile-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- sendfile-method -->
+
+      
+        <div id="stat-method" class="method-detail ">
+          <a name="method-c-stat"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">stat('/path/file'){|s| p s }   =>  EIO::Request</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <pre>Works like Ruby's stat. The callback will be called after the stat.</pre>
+
+<h3>Examples</h3>
+
+<pre>cb = Proc.new{|s| p s }
+EIO.stat('/path/file', cb)         =&gt;  EIO::Request
+
+EIO.stat('/path/file')             =&gt;  File::Stat</pre>
+            
+
+            
+            <div class="method-source-code" id="stat-source">
+<pre>
+static VALUE
+rb_eio_s_stat(int argc, VALUE *argv, VALUE eio)
+{
+    int ret;
+    VALUE path, proc, cb;
+    rb_scan_args(argc, argv, &quot;11&amp;&quot;, &amp;path, &amp;proc, &amp;cb);
+    AssertCallback(cb, 1);
+    Check_Type(path, T_STRING);
+    SyncRequest({
+        return rb_funcall(rb_cFile, sym_stat, 1, path);
+    });
+    AsyncRequest(stat, rb_eio_stat_cb, StringValueCStr(path));
+}</pre>
+            </div><!-- stat-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- stat-method -->
+
+      
+        <div id="symlink-method" class="method-detail ">
+          <a name="method-c-symlink"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">symlink('/path/a', '/path/b'){ p :linked }  =>  EIO::Request</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <pre>Asynchronously create a new symbolic link to the existing object at sourc path at the
+destination path and call the callback with the result code.</pre>
+
+<h3>Examples</h3>
+
+<pre>cb = Proc.new{ p :linked }
+EIO.symlink('/path/a', '/path/b', cb)           =&gt;  EIO::Request
+
+EIO.symlink('/path/a', '/path/b')               =&gt;  Fixnum</pre>
+            
+
+            
+            <div class="method-source-code" id="symlink-source">
+<pre>
+static VALUE
+rb_eio_s_symlink(int argc, VALUE *argv, VALUE eio)
+{
+    int ret;
+    VALUE path, new_path, proc, cb;
+    rb_scan_args(argc, argv, &quot;21&amp;&quot;, &amp;path, &amp;new_path, &amp;proc, &amp;cb);
+    AssertCallback(cb, NO_CB_ARGS);
+    Check_Type(path, T_STRING);
+    Check_Type(new_path, T_STRING);
+    SubmitRequest(symlink, rb_eio_generic_cb, StringValueCStr(path), StringValueCStr(new_path));
+}</pre>
+            </div><!-- symlink-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- symlink-method -->
+
+      
+        <div id="threads-method" class="method-detail ">
+          <a name="method-c-threads"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">threads                 =>  Fixnum</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <p>Number of worker threads spawned</p>
+            
+
+            
+            <div class="method-source-code" id="threads-source">
+<pre>
+static VALUE
+rb_eio_s_threads(VALUE eio)
+{
+    return INT2NUM(eio_nthreads());
+}</pre>
+            </div><!-- threads-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- threads-method -->
+
+      
+        <div id="truncate-method" class="method-detail ">
+          <a name="method-c-truncate"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">truncate('/path/file'){ p :truncated }       =>  EIO::Request</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <pre>Asynchronously truncates a given file path.</pre>
+
+<h3>Examples</h3>
+
+<pre>EIO.truncate('/path/file', 100){ p :truncated }  =&gt;  EIO::Request
+cb = Proc.new{ p :truncated }
+EIO.truncate('/path/file', 100, cb)              =&gt;  EIO::Request
+
+EIO.truncate('/path/file')                       =&gt;  Fixnum
+EIO.truncate('/path/file', 100)                  =&gt;  Fixnum</pre>
+            
+
+            
+            <div class="method-source-code" id="truncate-source">
+<pre>
+static VALUE
+rb_eio_s_truncate(int argc, VALUE *argv, VALUE eio)
+{
+    int ret;
+    VALUE path, offset, proc, cb;
+    rb_scan_args(argc, argv, &quot;12&amp;&quot;, &amp;path, &amp;offset, &amp;proc, &amp;cb);
+    AssertCallback(cb, NO_CB_ARGS);
+    Check_Type(path, T_STRING);
+    if (NIL_P(offset)) offset = eio_zero;
+    Check_Type(offset, T_FIXNUM);
+    SubmitRequest(truncate, rb_eio_generic_cb, StringValueCStr(path), FIX2INT(offset));
+}</pre>
+            </div><!-- truncate-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- truncate-method -->
+
+      
+        <div id="unlink-method" class="method-detail ">
+          <a name="method-c-unlink"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">unlink('/path/file'){ p :removed }   =>  EIO::Request</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <pre>Asynchronously unlink (delete) a file and call the callback with the result code.</pre>
+
+<h3>Examples</h3>
+
+<pre>cb = Proc.new{ p :removed }
+EIO.unlink('/path/file', cb)             =&gt;  EIO::Request
+
+EIO.unlink('/path/file')                 =&gt;  Fixnum</pre>
+            
+
+            
+            <div class="method-source-code" id="unlink-source">
+<pre>
+static VALUE
+rb_eio_s_unlink(int argc, VALUE *argv, VALUE eio)
+{
+    int ret;
+    VALUE path, proc, cb;
+    rb_scan_args(argc, argv, &quot;11&amp;&quot;, &amp;path, &amp;proc, &amp;cb);
+    AssertCallback(cb, NO_CB_ARGS);
+    Check_Type(path, T_STRING);
+    SubmitRequest(unlink, rb_eio_generic_cb, StringValueCStr(path));
+}</pre>
+            </div><!-- unlink-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- unlink-method -->
+
+      
+        <div id="wait-method" class="method-detail ">
+          <a name="method-c-wait"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">wait                    =>  nil</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <p>Drain / flush all pending requests - BLOCKS</p>
+            
+
+            
+            <div class="method-source-code" id="wait-source">
+<pre>
+static VALUE
+rb_eio_s_wait(VALUE eio)
+{
+    int res;
+    eio_req *req;
+    req = eio_sync(EIO_PRI_DEFAULT, NULL, NULL);
+    assert(req);
+    while (eio_nreqs())
+    {
+        rb_eio_s_wait0();
+        res = eio_poll();
+        if (res &gt; 0) rb_sys_fail(&quot;eio_poll&quot;);
+    }
+    return Qnil;
+}</pre>
+            </div><!-- wait-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- wait-method -->
+
+      
+        <div id="write-method" class="method-detail ">
+          <a name="method-c-write"></a>
+
+          
+          
+          <div class="method-heading">
+            <span class="method-callseq">write(fd, buf){|b| p b }           =>  EIO::Request</span>
+            
+            <span class="method-click-advice">click to toggle source</span>
+            
+          </div>
+          
+          
+
+          <div class="method-description">
+            
+            <pre>Asynchronously writes length bytes from a specified offset into a buffer.</pre>
+
+<h3>Examples</h3>
+
+<pre>EIO.write(fd, buf, 100){|b| p b }      =&gt;  EIO::Request
+EIO.write(fd, buf, 100, 50){|b| p b }  =&gt;  EIO::Request
+cb = Proc.new{|b| p b }
+EIO.write(fd, buf, 100, 50, cb)        =&gt;  EIO::Request
+
+EIO.write(fd, buf)                     =&gt;  Fixnum
+EIO.write(fd, buf, 100)                =&gt;  Fixnum
+EIO.write(fd, buf, 100, 50)            =&gt;  Fixnum</pre>
+            
+
+            
+            <div class="method-source-code" id="write-source">
+<pre>
+static VALUE
+rb_eio_s_write(int argc, VALUE *argv, VALUE eio)
+{
+    int ret, i_len, i_offset;
+    VALUE fd, buf, len, offset, proc, cb, buf_len;
+    rb_scan_args(argc, argv, &quot;23&amp;&quot;, &amp;fd, &amp;buf, &amp;len, &amp;offset, &amp;proc, &amp;cb);
+    AssertCallback(cb, 1);
+    Check_Type(fd, T_FIXNUM);
+    Check_Type(buf, T_STRING);
+    if (NIL_P(len)) len = INT2NUM(RSTRING_LEN(buf));
+    Check_Type(len, T_FIXNUM);
+    if (NIL_P(offset)) offset = eio_zero;
+    Check_Type(offset, T_FIXNUM);
+    i_offset = FIX2INT(offset);
+    i_len = FIX2INT(len);
+    if (i_offset &gt;= RSTRING_LEN(buf)) rb_raise(rb_eArgError, &quot;out of bounds offset&quot;);
+    if ((i_offset + i_len) &gt; RSTRING_LEN(buf)) rb_raise(rb_eArgError, &quot;length extends beyond buffer&quot;);
+    SyncRequest({
+        if (offset == eio_zero){
+            ret = write(FIX2INT(fd), StringValueCStr(buf), i_len);
+        } else {
+            ret = pwrite(FIX2INT(fd), StringValueCStr(buf), i_len, i_offset);
+        }
+        if (ret == -1) rb_sys_fail(&quot;write&quot;);
+        return INT2NUM(ret);
+    });
+    AsyncRequest(write, rb_eio_write_cb, FIX2INT(fd), StringValueCStr(buf), i_len, i_offset);
+}</pre>
+            </div><!-- write-source -->
+            
+          </div>
+
+          
+
+          
+        </div><!-- write-method -->
+
+      
+      </div><!-- public-class-method-details -->
+    
+    </div><!-- 5Buntitled-5D -->
+  
+
+  </div><!-- documentation -->
+
+  <div id="validator-badges">
+    <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+    <p><small>Generated with the <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish
+      Rdoc Generator</a> 2</small>.</p>
+  </div>
+
+</body>
+</html>
+

@@ -265,10 +265,10 @@ class TestEio < Test::Unit::TestCase
 # READ
 
   def test_read
-    expected = "# encoding: utf-8\n\n"
+    expected = "# encoding: utf-8"
     data = nil
     EIO.open(__FILE__) do |fd|
-      EIO.read(fd, 19) do |buf|
+      EIO.read(fd, 17) do |buf|
         data = buf
         EIO.close(fd)
       end

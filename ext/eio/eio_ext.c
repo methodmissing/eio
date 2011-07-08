@@ -14,6 +14,7 @@
 #include <ruby/io.h>
 #define NO_CB_ARGS 0
 #define EioEncode(str) rb_enc_associate(str, rb_default_internal_encoding())
+#define DONT_GC(obj) rb_gc_register_mark_object(obj)
 #define TRAP_BEG
 #define TRAP_END
 static size_t
@@ -37,6 +38,7 @@ static const rb_data_type_t stat_data_type = {
 #include "rubysig.h"
 #define NO_CB_ARGS -1
 #define EioEncode(str) str
+#define DONT_GC(obj) rb_gc_register_address(&obj)
 #endif
 
 /*
@@ -82,8 +84,12 @@ static VALUE eio_default_bufsize;
 static VALUE eio_default_mode;
 
 /*
- *  Pipe r / w fds
+ *  Pipe specific
  */
+
+static VALUE eio_pipe;
+static VALUE pipe_r_fd;
+static VALUE pipe_w_fd;
 static int eio_pipe_r_fd;
 static int eio_pipe_w_fd;
 
@@ -1289,13 +1295,16 @@ rb_eio_req_complete_p(VALUE obj)
 static int
 rb_eio_pipe_fd(VALUE io)
 {
+    int fd;
     rb_io_t *fptr;
     GetOpenFile(io, fptr);
 #ifdef RUBY_VM
-    return fptr->fd;
+    fd = fptr->fd;
 #else
-    return fileno(fptr->f);
+    fd = fileno(fptr->f);
 #endif
+    assert(fcntl(fd, F_SETFD, FD_CLOEXEC) != -1);
+    return fd;
 }
 
 /*
@@ -1304,15 +1313,16 @@ rb_eio_pipe_fd(VALUE io)
 static void
 rb_eio_create_pipe(void)
 {
-    VALUE pipe, pipe_r_fd, pipe_w_fd;
-    pipe = rb_funcall(rb_cIO, sym_pipe, 0);
+    DONT_GC(eio_pipe);
+    eio_pipe = rb_funcall(rb_cIO, sym_pipe, 0);
 
-    rb_gc_register_address(&pipe_r_fd);
-    pipe_r_fd = rb_ary_shift(pipe);
+    DONT_GC(pipe_r_fd);
+    pipe_r_fd = rb_ary_entry(eio_pipe, 0);
 
-    rb_gc_register_address(&pipe_w_fd);
-    pipe_w_fd = rb_ary_shift(pipe);
+    DONT_GC(pipe_w_fd);
+    pipe_w_fd = rb_ary_entry(eio_pipe, 1);
 
+    rb_ivar_set(mEio, sym_pipe, eio_pipe);
     rb_ivar_set(mEio, sym_pipe_r_fd, pipe_r_fd);
     rb_ivar_set(mEio, sym_pipe_w_fd, pipe_w_fd);
 
@@ -1329,9 +1339,19 @@ rb_eio_recreate_pipe(void)
 
 /* recreate the libeio notify pipe on fork */
 static void
-rb_eio_atfork(void)
+rb_eio_atfork_child(void)
 {
     rb_eio_recreate_pipe();
+}
+
+static void
+rb_eio_atfork_prepare(void)
+{
+}
+
+static void
+rb_eio_atfork_parent(void)
+{
 }
 
 void
@@ -1360,7 +1380,7 @@ Init_eio_ext()
     rb_eio_create_pipe();
 
     /* Recreate pipe on fork */
-    X_THREAD_ATFORK(0, 0, rb_eio_atfork);
+    X_THREAD_ATFORK(rb_eio_atfork_prepare, rb_eio_atfork_parent, rb_eio_atfork_child);
 
     rb_define_const(mEio, "PRI_MIN", INT2NUM(EIO_PRI_MIN));
     rb_define_const(mEio, "PRI_MAX", INT2NUM(EIO_PRI_MAX));

@@ -58,3 +58,7 @@ namespace :bench do
     ruby 'bench/middleware.rb'
   end
 end
+
+task 'bench:middleware' => :compile
+task 'bench:eventmachine' => :compile
+task :bench => %w(bench:middleware bench:eventmachine)

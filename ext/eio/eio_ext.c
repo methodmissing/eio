@@ -176,6 +176,10 @@ static VALUE rb_eio_wrap_request(eio_req *r);
         return INT2NUM(ret); \
     }
 
+#define CloseOnExec(fd) \
+    if (fcntl(fd, F_SETFD, FD_CLOEXEC) < 0) \
+        rb_sys_fail("could not set FD_CLOEXEC flag on descriptor");
+
 /*
  *  Callback for when libeio wants attention. Writes a char to pipe to wake up the event loop.
  */
@@ -239,8 +243,11 @@ rb_eio_generic_cb(eio_req *req)
 int
 rb_eio_open_cb(eio_req *req)
 {
+    int fd;
     EioCallback(req,{
-        rb_funcall(cb, sym_call, 1, INT2NUM(EIO_RESULT(req)));
+        fd = EIO_RESULT(req);
+        CloseOnExec(fd);
+        rb_funcall(cb, sym_call, 1, INT2NUM(fd));
     });
 }
 
@@ -506,7 +513,7 @@ rb_eio_s_set_idle_timeout(VALUE eio, VALUE seconds)
 static VALUE
 rb_eio_s_open(int argc, VALUE *argv, VALUE eio)
 {
-    int ret;
+    int ret, fd;
     VALUE path, flags, mode, proc, cb;
     rb_scan_args(argc, argv, "13&", &path, &flags, &mode, &proc, &cb);
     AssertCallback(cb, 1);
@@ -515,7 +522,13 @@ rb_eio_s_open(int argc, VALUE *argv, VALUE eio)
     Check_Type(flags, T_FIXNUM);
     if (NIL_P(mode)) mode = eio_default_mode;
     Check_Type(mode, T_FIXNUM);
-    SubmitRequest(open, rb_eio_open_cb, StringValueCStr(path), FIX2INT(flags), FIX2INT(mode));
+    SyncRequest({
+        fd = open(StringValueCStr(path), FIX2INT(flags), FIX2INT(mode));
+        if (fd < 0) rb_sys_fail("open");
+        CloseOnExec(fd);
+        return INT2NUM(fd);
+    });
+    AsyncRequest(open, rb_eio_open_cb, StringValueCStr(path), FIX2INT(flags), FIX2INT(mode));
 }
 
 /*

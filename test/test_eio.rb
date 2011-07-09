@@ -51,7 +51,7 @@ class TestEio < Test::Unit::TestCase
   end
 
   def test_threads
-    assert_equal 3, EIO.threads
+    assert_equal 1, EIO.threads
   end
 
   def test_set_max_poll_time

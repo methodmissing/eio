@@ -159,7 +159,7 @@ static VALUE rb_eio_wrap_request(eio_req *r);
 #define AsyncRequest(syscall, callback, ...) \
     if (rb_thread_current() != rb_thread_main()) \
         rb_raise(rb_eThreadError, "EIO requests can only be submitted on the main thread."); \
-    rb_gc_register_address(&cb); \
+    DONT_GC(cb); \
     return rb_eio_wrap_request(eio_ ## syscall(__VA_ARGS__, EIO_PRI_DEFAULT, callback, (void*)cb)); \
 
 /*
@@ -312,15 +312,10 @@ rb_eio_stat_cb(eio_req *req)
 static VALUE
 rb_eio_s_wait(VALUE eio)
 {
-    int res;
-    eio_req *req;
-    req = eio_sync(EIO_PRI_DEFAULT, NULL, NULL);
-    assert(req);
     while (eio_nreqs())
     {
         rb_eio_s_wait0();
-        res = eio_poll();
-        if (res > 0) rb_sys_fail("eio_poll");
+        if (eio_poll() > 0) rb_sys_fail("eio_poll");
     }
     return Qnil;
 }

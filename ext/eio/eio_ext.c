@@ -1202,7 +1202,7 @@ rb_eio_s_symlink(int argc, VALUE *argv, VALUE eio)
  * Mark an EIO::Request instance
  */
 static void
-rb_eio_mark_request(eio_req *r)
+rb_eio_mark_request(void *ptr)
 {
 }
 
@@ -1210,7 +1210,7 @@ rb_eio_mark_request(eio_req *r)
  * Free an EIO::Request instance
  */
 static void
-rb_eio_free_request(eio_req *r)
+rb_eio_free_request(void *ptr)
 {
 }
 

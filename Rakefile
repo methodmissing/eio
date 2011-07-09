@@ -46,3 +46,15 @@ end
 task :test => :compile
 
 task :default => :test
+
+namespace :bench do
+  desc 'Benchmark - eventmachine'
+  task :eventmachine do
+    ruby 'bench/eventmachine.rb'
+  end
+
+  desc 'Benchmark - middleware'
+  task :middleware do
+    ruby 'bench/middleware.rb'
+  end
+end

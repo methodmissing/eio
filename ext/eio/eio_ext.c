@@ -257,8 +257,11 @@ rb_eio_open_cb(eio_req *req)
 int
 rb_eio_read_cb(eio_req *req)
 {
+    VALUE buffer;
     EioCallback(req,{
-        rb_funcall(cb, sym_call, 1, EioEncode(rb_str_new((const char*)EIO_BUF(req), EIO_RESULT(req))));
+        buffer = EioEncode(rb_str_new((const char*)EIO_BUF(req), EIO_RESULT(req)));
+        OBJ_TAINT(buffer);
+        rb_funcall(cb, sym_call, 1, buffer);
     });
 }
 
@@ -269,14 +272,16 @@ int
 rb_eio_readdir_cb(eio_req *req)
 {
     int ret;
-    VALUE result;
+    VALUE result, entry;
     char *entries;
     EioCallback(req, {
         result = rb_ary_new2(EIO_RESULT(req));
         entries = (char *)EIO_BUF(req);
         while (EIO_RESULT(req)--)
         {
-            rb_ary_push(result, EioEncode(rb_str_new2(entries)));
+            entry = EioEncode(rb_str_new2(entries));
+            OBJ_TAINT(entry);
+            rb_ary_push(result, entry);
             entries += strlen(entries) + 1;
         }
         rb_funcall(cb, sym_call, 1, result);
@@ -792,7 +797,7 @@ rb_eio_s_readdir(int argc, VALUE *argv, VALUE eio)
 {
     int ret;
     VALUE path, proc, cb;
-    VALUE files;
+    VALUE files, entry;
     char *name;
     struct dirent *ent;
     rb_scan_args(argc, argv, "11&", &path, &proc, &cb);
@@ -807,7 +812,9 @@ rb_eio_s_readdir(int argc, VALUE *argv, VALUE eio)
         while ((ent = readdir(dir))) {
           name = ent->d_name;
           if (name[0] != '.' || (name[1] && (name[1] != '.' || name[2]))) {
-              rb_ary_push(files, rb_str_new2(name));
+              entry = EioEncode(rb_str_new2(name));
+              OBJ_TAINT(entry);
+              rb_ary_push(files, entry);
           }
         }
         ret = closedir(dir);

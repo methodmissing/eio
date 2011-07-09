@@ -49,9 +49,10 @@ class IoClient < EM::Connection
   REQ_TIMINGS = []
   WORK_TIMINGS = []
 
-  def self.stats(ctx, conns)
+  def self.stats(ctx, conns, pid)
+    mem = `ps -o rss= -p #{pid}`.to_i
     puts SEP_STR
-    puts FMT_STR % ["#{ctx} (#{conns} conns)"].concat(stats_for(REQ_TIMINGS)).concat(stats_for(WORK_TIMINGS))
+    puts FMT_STR % (["#{ctx} (#{conns} conns)"].concat(stats_for(REQ_TIMINGS)).concat(stats_for(WORK_TIMINGS)) << mem)
     EM.stop
   end
 
@@ -103,7 +104,7 @@ end
 def run(server, conns = 300)
   server_pid = send(server, conns)
   EM.run do
-    EM.add_timer((conns / 50) + 0.5){ IoClient.stats(server, conns) }
+    EM.add_timer((conns / 50) + 0.5){ IoClient.stats(server, conns, server_pid) }
     conns.times do
       c = EM.connect("0.0.0.0", 8000, IoClient)
       c.send_data('*')
@@ -115,12 +116,12 @@ ensure
 end
 
 HEADINGS = [ 'Context', 'Min req time', 'Max req time', 'Avg req time', 'Total req time',
-             'Min work time', 'Max work time', 'Avg work time', 'Total work time']
-FMT_STR = "| %-30s | %-12.5f | %-12.5f | %-12.5f | %-14.5f | %-13.5f | %-13.5f | %-13.5f | %-15.5f |"
-SEP_STR = "|#{'-' * 160}|"
+             'Min work time', 'Max work time', 'Avg work time', 'Total work time', 'Memory']
+FMT_STR = "| %-30s | %-12.5f | %-12.5f | %-12.5f | %-14.5f | %-13.5f | %-13.5f | %-13.5f | %-15.5f | %-7d |"
+SEP_STR = "|#{'-' * 170}|"
 
 puts SEP_STR
-puts "| %-30s | %-12s | %-12s | %-12s | %-14s | %-13s | %-13s | %-13s | %-15s |" % HEADINGS
+puts "| %-30s | %-12s | %-12s | %-12s | %-14s | %-13s | %-13s | %-13s | %-15s | %-7s |" % HEADINGS
 
 run :sync_io_server, 100
 run :async_io_server, 100

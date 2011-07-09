@@ -985,8 +985,8 @@ class TestEio < Test::Unit::TestCase
     file = File.join(SANDBOX, 'test_chown.txt')
     File.new(file, EIO::CREAT).close
     EIO.chown(file) do
-      assert_equal 502, File.stat(file).uid
-      assert_equal 502, File.stat(file).gid
+      assert_equal Process.uid, File.stat(file).uid
+      assert_equal Process.gid, File.stat(file).gid
       EIO.unlink(file)
     end
     EIO.wait
@@ -996,8 +996,8 @@ class TestEio < Test::Unit::TestCase
     file = File.join(SANDBOX, 'test_chown.txt')
     File.new(file, EIO::CREAT).close
     EIO.chown(file)
-    assert_equal 502, File.stat(file).uid
-    assert_equal 502, File.stat(file).gid
+    assert_equal Process.uid, File.stat(file).uid
+    assert_equal Process.gid, File.stat(file).gid
     EIO.unlink(file)
     EIO.wait
   end
@@ -1025,8 +1025,8 @@ class TestEio < Test::Unit::TestCase
     file = File.join(SANDBOX, 'test_fchown.txt')
     EIO.open(file, EIO::CREAT) do |fd|
       EIO.fchown(fd) do
-        assert_equal 502, File.stat(file).uid
-        assert_equal 502, File.stat(file).gid
+        assert_equal Process.uid, File.stat(file).uid
+        assert_equal Process.gid, File.stat(file).gid
         EIO.unlink(file) do
           EIO.close(fd)
         end
@@ -1039,8 +1039,8 @@ class TestEio < Test::Unit::TestCase
     file = File.join(SANDBOX, 'test_fchown.txt')
     EIO.open(file, EIO::CREAT) do |fd|
       EIO.fchown(fd)
-      assert_equal 502, File.stat(file).uid
-      assert_equal 502, File.stat(file).gid
+      assert_equal Process.uid, File.stat(file).uid
+      assert_equal Process.gid, File.stat(file).gid
       EIO.unlink(file) do
         EIO.close(fd)
       end

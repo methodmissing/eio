@@ -176,6 +176,9 @@ static VALUE rb_eio_wrap_request(eio_req *r);
         return INT2NUM(ret); \
     }
 
+/*
+ *  See http://udrepper.livejournal.com/20407.html
+ */
 #define CloseOnExec(fd) \
     if (fcntl(fd, F_SETFD, FD_CLOEXEC) < 0) \
         rb_sys_fail("could not set FD_CLOEXEC flag on descriptor");

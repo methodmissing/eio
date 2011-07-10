@@ -12,8 +12,9 @@
 #ifdef RUBY_VM
 #include <ruby/encoding.h>
 #include <ruby/io.h>
+static rb_encoding *binary_encoding;
 #define NO_CB_ARGS 0
-#define EioEncode(str) rb_enc_associate(str, rb_default_internal_encoding())
+#define EioEncode(str) rb_enc_associate(str, binary_encoding)
 #define DONT_GC(obj) rb_gc_register_mark_object(obj)
 #define TRAP_BEG
 #define TRAP_END
@@ -1393,6 +1394,10 @@ Init_eio_ext()
     eio_default_mode = INT2NUM(0777);
     eio_zero = INT2NUM(0);
     eio_default_bufsize = INT2NUM(BUFSIZ);
+
+#ifdef HAVE_RUBY_ENCODING_H
+    binary_encoding = rb_enc_find("binary");
+#endif
 
     /* Setup a communication pipe between libeio and other I/O frameworks */
     rb_eio_create_pipe();

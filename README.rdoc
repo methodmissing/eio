@@ -1,6 +1,6 @@
 = eio - a libeio wrapper for Ruby
 
-(c) 2011 Lourens Naudé (methodmissing)
+(c) 2011 Lourens Naudé (methodmissing), with API guidance and some helpers from Perl's IO::AIO (http://pod.tst.eu/http://cvs.schmorp.de/IO-AIO/AIO.pm)
 
   http://github.com/methodmissing/eio
 

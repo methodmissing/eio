@@ -51,6 +51,11 @@ static const rb_data_type_t stat_data_type = {
 #define EioStat(req) rb_funcall(cb, sym_call, 1, Data_Wrap_Struct(rb_cStat, NULL, NULL, EIO_BUF(req)));
 #endif
 
+int next_priority = EIO_PRI_DEFAULT;
+
+/*
+ *  Variable declaration for libeio requests
+ */
 #define EioSetup() \
     int ret; \
     eio_req *req;
@@ -175,6 +180,8 @@ static VALUE rb_eio_wrap_request(eio_req *r);
         rb_raise(rb_eThreadError, "EIO requests can only be submitted on the main thread."); \
     DONT_GC(cb); \
     req = eio_ ## syscall(__VA_ARGS__, EIO_PRI_DEFAULT, callback, (void*)cb); \
+    req->pri = next_priority; \
+    next_priority = EIO_PRI_DEFAULT; \
     eio_submit(req); \
     return rb_eio_wrap_request(req);
 
@@ -523,6 +530,36 @@ rb_eio_s_set_idle_timeout(VALUE eio, VALUE seconds)
 {
     eio_set_idle_timeout(FIX2INT(seconds));
     return seconds;
+}
+
+/*
+ *  call-seq:
+ *     EIO.priority                    =>  fixnum
+ *
+ *  Returns the priority value that would be used for the next request and, if priority is given, sets
+ *  the priority for the next async request.
+ *
+ *  The default priority is 0, the minimum and maximum priorities are -4 and 4, respectively. Requests
+ *  with higher priority will be serviced first.
+ *
+ *  The priority will be reset to 0 after each call to one of the async I/O functions.
+ *
+ * === Examples
+ *     EIO.priority = 4                =>  fixnum
+ *
+ */
+static VALUE
+rb_eio_s_priority(int argc, VALUE *argv, VALUE eio)
+{
+    int pri;
+    VALUE priority;
+    rb_scan_args(argc, argv, "01", &priority);
+    if NIL_P(priority) return INT2NUM(next_priority);
+    pri = INT2NUM(priority);
+    if (pri < EIO_PRI_MIN) pri = EIO_PRI_MIN;
+    if (pri > EIO_PRI_MAX) pri = EIO_PRI_MAX;
+    next_priority = pri;
+    return INT2NUM(next_priority);
 }
 
 /*
@@ -1455,6 +1492,7 @@ Init_eio_ext()
     rb_define_module_function(mEio, "pending", rb_eio_s_pending, 0);
     rb_define_module_function(mEio, "threads", rb_eio_s_threads, 0);
     rb_define_module_function(mEio, "fd", rb_eio_s_fd, 0);
+    rb_define_module_function(mEio, "priority", rb_eio_s_priority, -1);
 
     rb_define_module_function(mEio, "max_poll_time=", rb_eio_s_set_max_poll_time, 1);
     rb_define_module_function(mEio, "max_poll_reqs=", rb_eio_s_set_max_poll_reqs, 1);

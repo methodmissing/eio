@@ -14,6 +14,17 @@ class TestEio < Test::Unit::TestCase
     assert_instance_of Fixnum, EIO.pagesize
   end
 
+  def test_priority
+    assert_equal EIO::PRI_DEFAULT, EIO.priority
+    EIO.priority EIO::PRI_MAX
+    assert_equal EIO::PRI_MAX, EIO.priority
+    EIO.open(__FILE__) do |fd|
+      EIO.close(fd)
+    end
+    EIO.wait
+    assert_equal EIO::PRI_DEFAULT, EIO.priority
+  end
+
   def test_poll
     assert_equal 0, EIO.poll
   end

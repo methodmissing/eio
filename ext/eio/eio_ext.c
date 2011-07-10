@@ -35,6 +35,7 @@ static const rb_data_type_t stat_data_type = {
     "stat",
     {NULL, RUBY_TYPED_DEFAULT_FREE, stat_memsize,},
 };
+#define EioStat(req) rb_funcall(cb, sym_call, 1, TypedData_Wrap_Struct(rb_cStat, &stat_data_type, EIO_BUF(req)))
 #else
 #ifndef RSTRING_PTR
 #define RSTRING_PTR(str) RSTRING(str)->ptr
@@ -47,6 +48,7 @@ static const rb_data_type_t stat_data_type = {
 #define NO_CB_ARGS -1
 #define EioEncode(str) str
 #define DONT_GC(obj) rb_gc_register_address(&obj)
+#define EioStat(req) rb_funcall(cb, sym_call, 1, Data_Wrap_Struct(rb_cStat, NULL, NULL, EIO_BUF(req)));
 #endif
 
 #define EioSetup() \
@@ -323,11 +325,7 @@ int
 rb_eio_stat_cb(eio_req *req)
 {
     EioCallback(req,{
-#ifdef RUBY_VM
-        rb_funcall(cb, sym_call, 1, TypedData_Wrap_Struct(rb_cStat, &stat_data_type, EIO_BUF(req)));
-#else
-        rb_funcall(cb, sym_call, 1, Data_Wrap_Struct(rb_cStat, NULL, NULL, EIO_BUF(req)));
-#endif
+        EioStat(req);
     });
 }
 
@@ -616,6 +614,9 @@ rb_eio_s_fsync(int argc, VALUE *argv, VALUE eio)
     SubmitRequest(fsync, rb_eio_generic_cb, FIX2INT(fd));
 }
 
+int fdatasync(int fd);
+int fsync(int fd);
+
 /*
  *  call-seq:
  *     EIO.fdatasync(fd){ p :synced }  =>  EIO::Request
@@ -634,16 +635,18 @@ static VALUE
 rb_eio_s_fdatasync(int argc, VALUE *argv, VALUE eio)
 {
     VALUE fd, proc, cb;
+    int (*fsync_syscall)(int) = NULL;
     EioSetup();
+#if HAVE_FDATASYNC
+       fsync_syscall = fdatasync;
+#else
+       fsync_syscall = fsync;
+#endif
     rb_scan_args(argc, argv, "11&", &fd, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(fd, T_FIXNUM);
     SyncRequest({
-#if HAVE_FDATASYNC
-       ret = fdatasync(FIX2INT(fd));
-#else
-       ret = fsync(FIX2INT(fd));
-#endif
+       ret = (*fsync_syscall)(FIX2INT(fd));
        if (ret == -1) rb_sys_fail("fdatasync");
        return INT2NUM(ret);
     });

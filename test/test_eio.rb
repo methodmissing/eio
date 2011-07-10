@@ -10,6 +10,10 @@ FileUtils.rm_rf SANDBOX
 FileUtils.mkdir_p SANDBOX
 
 class TestEio < Test::Unit::TestCase
+  def test_pagesize
+    assert_instance_of Fixnum, EIO.pagesize
+  end
+
   def test_poll
     assert_equal 0, EIO.poll
   end

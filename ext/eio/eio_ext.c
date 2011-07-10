@@ -320,6 +320,19 @@ rb_eio_stat_cb(eio_req *req)
 
 /*
  *  call-seq:
+ *     EIO.pagesize                    =>  fixnum
+ *
+ *  Page size for this system
+ *
+ */
+static VALUE
+rb_eio_s_pagesize(VALUE eio)
+{
+    return INT2NUM(eio_pagesize());
+}
+
+/*
+ *  call-seq:
  *     EIO.wait                    =>  nil
  * 
  *  Drain / flush all pending requests - BLOCKS
@@ -1418,6 +1431,7 @@ Init_eio_ext()
 
     rb_define_module_function(mEio, "poll", rb_eio_s_poll, 0);
     rb_define_module_function(mEio, "wait", rb_eio_s_wait, 0);
+    rb_define_module_function(mEio, "pagesize", rb_eio_s_pagesize, 0);
     rb_define_module_function(mEio, "requests", rb_eio_s_requests, 0);
     rb_define_module_function(mEio, "ready", rb_eio_s_ready, 0);
     rb_define_module_function(mEio, "pending", rb_eio_s_pending, 0);

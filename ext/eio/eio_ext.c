@@ -536,11 +536,11 @@ rb_eio_s_set_idle_timeout(VALUE eio, VALUE seconds)
  *  call-seq:
  *     EIO.priority                    =>  fixnum
  *
- *  Returns the priority value that would be used for the next request and, if priority is given, sets
- *  the priority for the next async request.
+ *  Returns the priority value that would be used for the next request and, if priority is
+ *  given, sets the priority for the next async request.
  *
- *  The default priority is 0, the minimum and maximum priorities are -4 and 4, respectively. Requests
- *  with higher priority will be serviced first.
+ *  The default priority is 0, the minimum and maximum priorities are -4 and 4, respectively.
+ *  Requests with higher priority will be serviced first.
  *
  *  The priority will be reset to 0 after each call to one of the async I/O functions.
  *

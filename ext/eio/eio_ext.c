@@ -1,5 +1,12 @@
 #define EIO_REQ_MEMBERS short int complete;
 
+/*
+ *  Redefine the submission macro from eio.c - we explicitly submit through AsyncRequest instead.
+ *  Ahead of time change for grouped requests where we just want a pointer to an eio_request struct
+ *  for one shot grouped submission.
+ */
+#define SEND return req
+
 #include "../libeio/config.h"
 #include "../libeio/eio.h"
 #include "../libeio/xthread.h"
@@ -41,6 +48,10 @@ static const rb_data_type_t stat_data_type = {
 #define EioEncode(str) str
 #define DONT_GC(obj) rb_gc_register_address(&obj)
 #endif
+
+#define EioSetup() \
+    int ret; \
+    eio_req *req;
 
 /*
  *  Synchronous I/O fallback
@@ -161,7 +172,9 @@ static VALUE rb_eio_wrap_request(eio_req *r);
     if (rb_thread_current() != rb_thread_main()) \
         rb_raise(rb_eThreadError, "EIO requests can only be submitted on the main thread."); \
     DONT_GC(cb); \
-    return rb_eio_wrap_request(eio_ ## syscall(__VA_ARGS__, EIO_PRI_DEFAULT, callback, (void*)cb)); \
+    req = eio_ ## syscall(__VA_ARGS__, EIO_PRI_DEFAULT, callback, (void*)cb); \
+    eio_submit(req); \
+    return rb_eio_wrap_request(req);
 
 /*
  *  Abstraction for conditional sync / async I/O
@@ -535,8 +548,9 @@ rb_eio_s_set_idle_timeout(VALUE eio, VALUE seconds)
 static VALUE
 rb_eio_s_open(int argc, VALUE *argv, VALUE eio)
 {
-    int ret, fd;
+    int fd;
     VALUE path, flags, mode, proc, cb;
+    EioSetup();
     rb_scan_args(argc, argv, "13&", &path, &flags, &mode, &proc, &cb);
     AssertCallback(cb, 1);
     Check_Type(path, T_STRING);
@@ -569,8 +583,8 @@ rb_eio_s_open(int argc, VALUE *argv, VALUE eio)
 static VALUE
 rb_eio_s_close(int argc, VALUE *argv, VALUE eio)
 {
-    int ret;
     VALUE fd, proc, cb;
+    EioSetup();
     rb_scan_args(argc, argv, "11&", &fd, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(fd, T_FIXNUM);
@@ -594,8 +608,8 @@ rb_eio_s_close(int argc, VALUE *argv, VALUE eio)
 static VALUE
 rb_eio_s_fsync(int argc, VALUE *argv, VALUE eio)
 {
-    int ret;
     VALUE fd, proc, cb;
+    EioSetup();
     rb_scan_args(argc, argv, "11&", &fd, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(fd, T_FIXNUM);
@@ -619,8 +633,8 @@ rb_eio_s_fsync(int argc, VALUE *argv, VALUE eio)
 static VALUE
 rb_eio_s_fdatasync(int argc, VALUE *argv, VALUE eio)
 {
-    int ret;
     VALUE fd, proc, cb;
+    EioSetup();
     rb_scan_args(argc, argv, "11&", &fd, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(fd, T_FIXNUM);
@@ -656,9 +670,9 @@ rb_eio_s_fdatasync(int argc, VALUE *argv, VALUE eio)
 static VALUE
 rb_eio_s_read(int argc, VALUE *argv, VALUE eio)
 {
-    int ret;
     VALUE fd, len, offset, proc, cb;
     VALUE buf;
+    EioSetup();
     rb_scan_args(argc, argv, "13&", &fd, &len, &offset, &proc, &cb);
     AssertCallback(cb, 1);
     Check_Type(fd, T_FIXNUM);
@@ -701,8 +715,8 @@ rb_eio_s_read(int argc, VALUE *argv, VALUE eio)
 static VALUE
 rb_eio_s_readahead(int argc, VALUE *argv, VALUE eio)
 {
-    int ret;
     VALUE fd, len, offset, proc, cb;
+    EioSetup();
     rb_scan_args(argc, argv, "13&", &fd, &len, &offset, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(fd, T_FIXNUM);
@@ -734,8 +748,9 @@ rb_eio_s_readahead(int argc, VALUE *argv, VALUE eio)
 static VALUE
 rb_eio_s_write(int argc, VALUE *argv, VALUE eio)
 {
-    int ret, i_len, i_offset;
+    int i_len, i_offset;
     VALUE fd, buf, len, offset, proc, cb, buf_len;
+    EioSetup();
     rb_scan_args(argc, argv, "23&", &fd, &buf, &len, &offset, &proc, &cb);
     AssertCallback(cb, 1);
     Check_Type(fd, T_FIXNUM);
@@ -780,8 +795,8 @@ rb_eio_s_write(int argc, VALUE *argv, VALUE eio)
 static VALUE
 rb_eio_s_sendfile(int argc, VALUE *argv, VALUE eio)
 {
-    int ret;
     VALUE out_fd, in_fd, offset, len, proc, cb;
+    EioSetup();
     rb_scan_args(argc, argv, "23&", &out_fd, &in_fd, &offset, &len, &proc, &cb);
     AssertCallback(cb, 1);
     Check_Type(in_fd, T_FIXNUM);
@@ -812,11 +827,11 @@ rb_eio_s_sendfile(int argc, VALUE *argv, VALUE eio)
 static VALUE
 rb_eio_s_readdir(int argc, VALUE *argv, VALUE eio)
 {
-    int ret;
     VALUE path, proc, cb;
     VALUE files, entry;
     char *name;
     struct dirent *ent;
+    EioSetup();
     rb_scan_args(argc, argv, "11&", &path, &proc, &cb);
     AssertCallback(cb, 1);
     Check_Type(path, T_STRING);
@@ -859,8 +874,8 @@ rb_eio_s_readdir(int argc, VALUE *argv, VALUE eio)
 static VALUE
 rb_eio_s_mkdir(int argc, VALUE *argv, VALUE eio)
 {
-    int ret;
     VALUE path, mode, proc, cb;
+    EioSetup();
     rb_scan_args(argc, argv, "12&", &path, &mode, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(path, T_STRING);
@@ -885,8 +900,8 @@ rb_eio_s_mkdir(int argc, VALUE *argv, VALUE eio)
 static VALUE
 rb_eio_s_rmdir(int argc, VALUE *argv, VALUE eio)
 {
-    int ret;
     VALUE path, proc, cb;
+    EioSetup();
     rb_scan_args(argc, argv, "11&", &path, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(path, T_STRING);
@@ -909,8 +924,8 @@ rb_eio_s_rmdir(int argc, VALUE *argv, VALUE eio)
 static VALUE
 rb_eio_s_unlink(int argc, VALUE *argv, VALUE eio)
 {
-    int ret;
     VALUE path, proc, cb;
+    EioSetup();
     rb_scan_args(argc, argv, "11&", &path, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(path, T_STRING);
@@ -933,8 +948,8 @@ rb_eio_s_unlink(int argc, VALUE *argv, VALUE eio)
 static VALUE
 rb_eio_s_readlink(int argc, VALUE *argv, VALUE eio)
 {
-    int ret;
     VALUE path, proc, cb;
+    EioSetup();
     rb_scan_args(argc, argv, "11&", &path, &proc, &cb);
     AssertCallback(cb, 1);
     Check_Type(path, T_STRING);
@@ -960,8 +975,8 @@ rb_eio_s_readlink(int argc, VALUE *argv, VALUE eio)
 static VALUE
 rb_eio_s_stat(int argc, VALUE *argv, VALUE eio)
 {
-    int ret;
     VALUE path, proc, cb;
+    EioSetup();
     rb_scan_args(argc, argv, "11&", &path, &proc, &cb);
     AssertCallback(cb, 1);
     Check_Type(path, T_STRING);
@@ -987,8 +1002,8 @@ rb_eio_s_stat(int argc, VALUE *argv, VALUE eio)
 static VALUE
 rb_eio_s_rename(int argc, VALUE *argv, VALUE eio)
 {
-    int ret;
     VALUE path, new_path, proc, cb;
+    EioSetup();
     rb_scan_args(argc, argv, "21&", &path, &new_path, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(path, T_STRING);
@@ -1014,8 +1029,8 @@ rb_eio_s_rename(int argc, VALUE *argv, VALUE eio)
 static VALUE
 rb_eio_s_chmod(int argc, VALUE *argv, VALUE eio)
 {
-    int ret;
     VALUE path, mode, proc, cb;
+    EioSetup();
     rb_scan_args(argc, argv, "12&", &path, &mode, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(path, T_STRING);
@@ -1042,8 +1057,8 @@ rb_eio_s_chmod(int argc, VALUE *argv, VALUE eio)
 static VALUE
 rb_eio_s_fchmod(int argc, VALUE *argv, VALUE eio)
 {
-    int ret;
     VALUE fd, mode, proc, cb;
+    EioSetup();
     rb_scan_args(argc, argv, "12&", &fd, &mode, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(fd, T_FIXNUM);
@@ -1070,8 +1085,8 @@ rb_eio_s_fchmod(int argc, VALUE *argv, VALUE eio)
 static VALUE
 rb_eio_s_truncate(int argc, VALUE *argv, VALUE eio)
 {
-    int ret;
     VALUE path, offset, proc, cb;
+    EioSetup();
     rb_scan_args(argc, argv, "12&", &path, &offset, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(path, T_STRING);
@@ -1098,8 +1113,8 @@ rb_eio_s_truncate(int argc, VALUE *argv, VALUE eio)
 static VALUE
 rb_eio_s_ftruncate(int argc, VALUE *argv, VALUE eio)
 {
-    int ret;
     VALUE fd, offset, proc, cb;
+    EioSetup();
     rb_scan_args(argc, argv, "12&", &fd, &offset, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(fd, T_FIXNUM);
@@ -1127,8 +1142,8 @@ rb_eio_s_ftruncate(int argc, VALUE *argv, VALUE eio)
 static VALUE
 rb_eio_s_chown(int argc, VALUE *argv, VALUE eio)
 {
-    int ret;
     VALUE path, uid, gid, proc, cb;
+    EioSetup();
     rb_scan_args(argc, argv, "13&", &path, &uid, &gid, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(path, T_STRING);
@@ -1158,8 +1173,8 @@ rb_eio_s_chown(int argc, VALUE *argv, VALUE eio)
 static VALUE
 rb_eio_s_fchown(int argc, VALUE *argv, VALUE eio)
 {
-    int ret;
     VALUE fd, uid, gid, proc, cb;
+    EioSetup();
     rb_scan_args(argc, argv, "13&", &fd, &uid, &gid, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(fd, T_FIXNUM);
@@ -1187,8 +1202,8 @@ rb_eio_s_fchown(int argc, VALUE *argv, VALUE eio)
 static VALUE
 rb_eio_s_link(int argc, VALUE *argv, VALUE eio)
 {
-    int ret;
     VALUE path, new_path, proc, cb;
+    EioSetup();
     rb_scan_args(argc, argv, "21&", &path, &new_path, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(path, T_STRING);
@@ -1213,8 +1228,8 @@ rb_eio_s_link(int argc, VALUE *argv, VALUE eio)
 static VALUE
 rb_eio_s_symlink(int argc, VALUE *argv, VALUE eio)
 {
-    int ret;
     VALUE path, new_path, proc, cb;
+    EioSetup();
     rb_scan_args(argc, argv, "21&", &path, &new_path, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(path, T_STRING);

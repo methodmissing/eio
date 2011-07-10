@@ -1653,7 +1653,9 @@ static void eio_api_destroy (eio_req *req)
   req->data    = data;						\
   req->destroy = eio_api_destroy;
 
+#ifndef SEND
 #define SEND eio_submit (req); return req
+#endif
 
 #define PATH							\
   req->flags |= EIO_FLAG_PTR1_FREE;				\

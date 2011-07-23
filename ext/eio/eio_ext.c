@@ -94,6 +94,7 @@ static VALUE sym_readlink;
 static VALUE sym_stat;
 static VALUE sym_pipe_r_fd;
 static VALUE sym_pipe_w_fd;
+static VALUE sym_pipe_ivar;
 
 /*
  *  Common fixnums
@@ -202,6 +203,7 @@ static VALUE rb_eio_wrap_request(eio_req *r);
 /*
  *  See http://udrepper.livejournal.com/20407.html
  */
+
 #define CloseOnExec(fd) \
     if (fcntl(fd, F_SETFD, FD_CLOEXEC) < 0) \
         rb_sys_fail("could not set FD_CLOEXEC flag on descriptor");
@@ -1283,6 +1285,7 @@ rb_eio_s_symlink(int argc, VALUE *argv, VALUE eio)
 static void
 rb_eio_mark_request(void *ptr)
 {
+    struct eio_req *req = ptr;
 }
 
 /*
@@ -1291,6 +1294,7 @@ rb_eio_mark_request(void *ptr)
 static void
 rb_eio_free_request(void *ptr)
 {
+    struct eio_req *req = ptr;
 }
 
 /*
@@ -1409,7 +1413,7 @@ rb_eio_create_pipe(void)
     DONT_GC(pipe_w_fd);
     pipe_w_fd = rb_ary_entry(eio_pipe, 1);
 
-    rb_ivar_set(mEio, sym_pipe, eio_pipe);
+    rb_ivar_set(mEio, sym_pipe_ivar, eio_pipe);
     rb_ivar_set(mEio, sym_pipe_r_fd, pipe_r_fd);
     rb_ivar_set(mEio, sym_pipe_w_fd, pipe_w_fd);
 
@@ -1453,10 +1457,11 @@ Init_eio_ext()
     sym_call = rb_intern("call");
     sym_arity = rb_intern("arity");
     sym_pipe = rb_intern("pipe");
+    sym_pipe_ivar = rb_intern("@pipe");
     sym_readlink = rb_intern("readlink");
     sym_stat = rb_intern("stat");
-    sym_pipe_r_fd = rb_intern("pipe_r_fd");
-    sym_pipe_w_fd = rb_intern("pipe_w_fd");
+    sym_pipe_r_fd = rb_intern("@pipe_r_fd");
+    sym_pipe_w_fd = rb_intern("@pipe_w_fd");
 
     /* Common fixnum defaults */
     eio_default_mode = INT2NUM(0777);

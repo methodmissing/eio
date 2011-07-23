@@ -1,4 +1,8 @@
-#define EIO_REQ_MEMBERS short int complete;
+#include "ruby.h"
+
+#define EIO_REQ_MEMBERS \
+    VALUE cb; \
+    short int complete; \
 
 /*
  *  Redefine the submission macro from eio.c - we explicitly submit through AsyncRequest instead.
@@ -11,7 +15,6 @@
 #include "../libeio/eio.h"
 #include "../libeio/xthread.h"
 #include "../libeio/eio.c"
-#include "ruby.h"
 
 /*
  *  Ruby 1.9 specific macros
@@ -142,13 +145,11 @@ static VALUE rb_eio_wrap_request(eio_req *r);
 #define EioCallback(req, statements) \
     VALUE cb; \
     assert(req); \
-    cb = (VALUE)req->data; \
+    cb = (VALUE)req->cb; \
     if EIO_CANCELLED(req){ \
-        rb_gc_unregister_address(&cb); \
         return 0; \
     } \
     if (req->result == -1){ \
-         rb_gc_unregister_address(&cb); \
          errno = req->errorno; \
          req->complete = 1; \
          (!req->ptr1) ? rb_sys_fail(0) : rb_sys_fail(req->ptr1); \
@@ -157,7 +158,6 @@ static VALUE rb_eio_wrap_request(eio_req *r);
         if (!NIL_P(cb)){ \
             statements; \
             req->complete = 1; \
-            rb_gc_unregister_address(&cb); \
         } \
     } \
     return 0;
@@ -178,8 +178,8 @@ static VALUE rb_eio_wrap_request(eio_req *r);
 #define AsyncRequest(syscall, callback, ...) \
     if (rb_thread_current() != rb_thread_main()) \
         rb_raise(rb_eThreadError, "EIO requests can only be submitted on the main thread."); \
-    DONT_GC(cb); \
-    req = eio_ ## syscall(__VA_ARGS__, EIO_PRI_DEFAULT, callback, (void*)cb); \
+    req = eio_ ## syscall(__VA_ARGS__, EIO_PRI_DEFAULT, callback, NULL); \
+    req->cb = cb; \
     req->pri = next_priority; \
     next_priority = EIO_PRI_DEFAULT; \
     eio_submit(req); \
@@ -1283,6 +1283,8 @@ rb_eio_s_symlink(int argc, VALUE *argv, VALUE eio)
 static void
 rb_eio_mark_request(void *ptr)
 {
+    struct eio_req *req = ptr;
+    if (req) rb_gc_mark(req->cb);
 }
 
 /*
@@ -1291,6 +1293,7 @@ rb_eio_mark_request(void *ptr)
 static void
 rb_eio_free_request(void *ptr)
 {
+    struct eio_req *req = ptr;
 }
 
 /*

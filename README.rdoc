@@ -8,10 +8,9 @@
 
 Changing a file descriptor that references a normal file to non-blocking mode (O_NONBLOCK flag) have
 absolutely no effect. Regular files are always readable and always writable. Readability and writability
-checks will also succeed immediately. Such operations can however still block for a undefined amount of time - busy disks, slow disks (EBS) etc. and usually also include a chunk of disk seek time as well
-Manipulating directories, stat'ing files, changing permissions, ownership etc. is only defined through
-synchronous APIs. This is a major drawback for environments where throughput is critical and a high
-degree of interactivity is demanded at all times.
+checks will also succeed immediately. Such operations can however still block for a undefined amount of time - busy disks, slow disks (EBS) etc. and usually also include navigating file system layout and a
+chunk of disk seek time (mechanical movement) as well. Manipulating directories, stat'ing files, changing
+permissions, ownership etc. is only defined through synchronous APIs. This is a major drawback for environments where throughput is critical and a high degree of interactivity is demanded at all times.
 
 == How it works
 

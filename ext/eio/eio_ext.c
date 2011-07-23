@@ -66,7 +66,7 @@ int next_priority = EIO_PRI_DEFAULT;
 #define s_fsync fsync
 #define s_open open
 #define s_close close
-#define s_readahead(fd, len, off) read(fd, off, len)
+#define s_readahead readahead
 #define s_sendfile eio_sendfile_sync
 #define s_mkdir mkdir
 #define s_rmdir rmdir
@@ -758,6 +758,8 @@ static VALUE
 rb_eio_s_readahead(int argc, VALUE *argv, VALUE eio)
 {
     VALUE fd, len, offset, proc, cb;
+    /* for readahead's emulation fallback in libeio */
+    etp_worker *self = calloc(1, sizeof (etp_worker));
     EioSetup();
     rb_scan_args(argc, argv, "13&", &fd, &len, &offset, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);

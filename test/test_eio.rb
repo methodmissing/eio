@@ -3,6 +3,7 @@
 require 'test/unit'
 require 'eio'
 require 'fileutils' #19
+require 'timeout'
 
 TMP = File.expand_path(File.join(File.dirname(__FILE__), '..', 'tmp'))
 SANDBOX = File.join(TMP, 'sandbox')
@@ -66,7 +67,7 @@ class TestEio < Test::Unit::TestCase
   end
 
   def test_threads
-    assert_equal 1, EIO.threads
+    assert_equal 2, EIO.threads
   end
 
   def test_set_max_poll_time
@@ -108,6 +109,29 @@ class TestEio < Test::Unit::TestCase
     assert_raises(TypeError){ EIO.open(1) }
     assert_raises(TypeError){ EIO.open(__FILE__, EIO::RDONLY, 0, "") }
     EIO.wait
+  end
+
+# BUSY
+
+  def test_busy_invalid_arg
+    assert_raises TypeError do
+      EIO.busy('2')
+    end
+  end
+
+  def test_busy
+    assert_raises Timeout::Error do
+      timeout(1) do
+        EIO.busy(2){ :timeout }
+        EIO.wait
+      end
+    end
+  end
+
+  def test_busy_sync
+    assert_raises ArgumentError do
+      EIO.busy(2)
+    end
   end
 
 # OPEN

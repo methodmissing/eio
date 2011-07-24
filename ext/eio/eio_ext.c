@@ -565,6 +565,31 @@ rb_eio_s_priority(int argc, VALUE *argv, VALUE eio)
 
 /*
  *  call-seq:
+ *     EIO.busy(2){ p "done sleeping 2 seconds" }            =>  EIO::Request
+ *
+ *  Puts one of the worker threads to sleep for a given delay. For debugging and benchmarks only.
+ *
+ * === Examples
+ *     EIO.busy(2){ p "done sleeping 2 seconds" }           =>  EIO::Request
+ *     EIO.busy(2)                                          =>  Fixnum
+ *
+*/
+static VALUE
+rb_eio_s_busy(int argc, VALUE *argv, VALUE eio)
+{
+    VALUE delay, proc, cb;
+    EioSetup(int);
+    rb_scan_args(argc, argv, "11&", &delay, &proc, &cb);
+    AssertCallback(cb, NO_CB_ARGS);
+    Check_Type(delay, T_FIXNUM);
+    SyncRequest({
+        rb_raise(rb_eArgError, "This method is intended to block worker threads and as such don't support a synchronous interface");
+    });
+    AsyncRequest(busy, rb_eio_generic_cb, NUM2INT(delay));
+}
+
+/*
+ *  call-seq:
  *     EIO.open('/path/file'){|fd| p fd }                    =>  EIO::Request
  *
  *  Asynchronously open or create a file and call the callback with a newly created file handle
@@ -1507,6 +1532,7 @@ Init_eio_ext()
     rb_define_module_function(mEio, "max_idle=", rb_eio_s_set_max_idle, 1);
     rb_define_module_function(mEio, "idle_timeout=", rb_eio_s_set_idle_timeout, 1);
 
+    rb_define_module_function(mEio, "busy", rb_eio_s_busy, -1);
     rb_define_module_function(mEio, "fsync", rb_eio_s_fsync, -1);
     rb_define_module_function(mEio, "fdatasync", rb_eio_s_fdatasync, -1);
     rb_define_module_function(mEio, "open", rb_eio_s_open, -1);

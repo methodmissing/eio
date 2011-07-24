@@ -134,6 +134,21 @@ class TestEio < Test::Unit::TestCase
     end
   end
 
+# NOP
+
+  def test_nop
+    done = false
+    EIO.nop{ done = true }
+    EIO.wait
+    assert done
+  end
+
+  def test_nop_sync
+    assert_raises ArgumentError do
+      EIO.nop
+    end
+  end
+
 # OPEN
 
   def test_open_invalid_path

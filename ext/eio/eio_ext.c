@@ -176,15 +176,25 @@ static VALUE rb_eio_wrap_request(eio_req *r);
 /*
  *  Asynchronous I/O request
  */
-#define AsyncRequest(syscall, callback, ...) \
+#define SetupAsyncRequest(syscall, callback, statements) \
     if (rb_thread_current() != rb_thread_main()) \
         rb_raise(rb_eThreadError, "EIO requests can only be submitted on the main thread."); \
     DONT_GC(cb); \
-    req = eio_ ## syscall(__VA_ARGS__, EIO_PRI_DEFAULT, callback, (void*)cb); \
+    statements \
     req->pri = next_priority; \
     next_priority = EIO_PRI_DEFAULT; \
     eio_submit(req); \
     return rb_eio_wrap_request(req);
+
+#define AsyncRequest(syscall, callback, ...) \
+    SetupAsyncRequest(syscall, callback, { \
+        req = eio_ ## syscall(__VA_ARGS__, EIO_PRI_DEFAULT, callback, (void*)cb); \
+    });
+
+#define AsyncRequestNoArgs(syscall, callback) \
+    SetupAsyncRequest(syscall, callback, { \
+        req = eio_ ## syscall(EIO_PRI_DEFAULT, callback, (void*)cb); \
+    });
 
 /*
  *  Abstraction for conditional sync / async I/O
@@ -571,7 +581,6 @@ rb_eio_s_priority(int argc, VALUE *argv, VALUE eio)
  *
  * === Examples
  *     EIO.busy(2){ p "done sleeping 2 seconds" }           =>  EIO::Request
- *     EIO.busy(2)                                          =>  Fixnum
  *
 */
 static VALUE
@@ -586,6 +595,29 @@ rb_eio_s_busy(int argc, VALUE *argv, VALUE eio)
         rb_raise(rb_eArgError, "This method is intended to block worker threads and as such don't support a synchronous interface");
     });
     AsyncRequest(busy, rb_eio_generic_cb, NUM2INT(delay));
+}
+
+/*
+ *  call-seq:
+ *     EIO.nop{ p "gone through the request cycle" }        =>  EIO::Request
+ *
+ *  Does nothing, except go through the whole request cycle. For measuring request latency.
+ *
+ * === Examples
+ *     EIO.nop{ p "gone through the request cycle" }        =>  EIO::Request
+ *
+*/
+static VALUE
+rb_eio_s_nop(int argc, VALUE *argv, VALUE eio)
+{
+    VALUE proc, cb;
+    EioSetup(int);
+    rb_scan_args(argc, argv, "01&", &proc, &cb);
+    AssertCallback(cb, NO_CB_ARGS);
+    SyncRequest({
+        rb_raise(rb_eArgError, "This method is intended to only go through the request cycle and as such don't support a synchronous interface");
+    });
+    AsyncRequestNoArgs(nop, rb_eio_generic_cb);
 }
 
 /*
@@ -1533,6 +1565,7 @@ Init_eio_ext()
     rb_define_module_function(mEio, "idle_timeout=", rb_eio_s_set_idle_timeout, 1);
 
     rb_define_module_function(mEio, "busy", rb_eio_s_busy, -1);
+    rb_define_module_function(mEio, "nop", rb_eio_s_nop, -1);
     rb_define_module_function(mEio, "fsync", rb_eio_s_fsync, -1);
     rb_define_module_function(mEio, "fdatasync", rb_eio_s_fdatasync, -1);
     rb_define_module_function(mEio, "open", rb_eio_s_open, -1);

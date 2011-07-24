@@ -149,6 +149,19 @@ class TestEio < Test::Unit::TestCase
     end
   end
 
+# SYNC
+
+  def test_sync
+    done = false
+    EIO.sync{ done = true }
+    EIO.wait
+    assert done
+  end
+
+  def test_synchronous_sync
+    assert_equal nil, EIO.sync
+  end
+
 # OPEN
 
   def test_open_invalid_path

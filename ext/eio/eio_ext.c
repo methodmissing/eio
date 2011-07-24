@@ -622,6 +622,31 @@ rb_eio_s_nop(int argc, VALUE *argv, VALUE eio)
 
 /*
  *  call-seq:
+ *     EIO.sync{ p "fs buffers flushed" }                   =>  EIO::Request
+ *
+ *  Flush Kernel filesystem buffers asynchronously out to disk.
+ *
+ * === Examples
+ *     EIO.sync{ p "fs buffers flushed" }                   =>  EIO::Request
+ *     EIO.sync                                             =>  nil
+ *
+*/
+static VALUE
+rb_eio_s_sync(int argc, VALUE *argv, VALUE eio)
+{
+    VALUE proc, cb;
+    EioSetup(int);
+    rb_scan_args(argc, argv, "01&", &proc, &cb);
+    AssertCallback(cb, NO_CB_ARGS);
+    SyncRequest({
+        sync();
+        return Qnil;
+    });
+    AsyncRequestNoArgs(sync, rb_eio_generic_cb);
+}
+
+/*
+ *  call-seq:
  *     EIO.open('/path/file'){|fd| p fd }                    =>  EIO::Request
  *
  *  Asynchronously open or create a file and call the callback with a newly created file handle
@@ -1566,6 +1591,7 @@ Init_eio_ext()
 
     rb_define_module_function(mEio, "busy", rb_eio_s_busy, -1);
     rb_define_module_function(mEio, "nop", rb_eio_s_nop, -1);
+    rb_define_module_function(mEio, "sync", rb_eio_s_sync, -1);
     rb_define_module_function(mEio, "fsync", rb_eio_s_fsync, -1);
     rb_define_module_function(mEio, "fdatasync", rb_eio_s_fdatasync, -1);
     rb_define_module_function(mEio, "open", rb_eio_s_open, -1);

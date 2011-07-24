@@ -1,4 +1,7 @@
 require 'mkmf'
+
+RbConfig::MAKEFILE_CONFIG['CC'] = ENV['CC'] if ENV['CC']
+
 dir_config('eio')
 $defs << "-DRUBY_VM" if have_func('rb_thread_blocking_region')
 libs_path = File.expand_path(File.join(File.dirname(__FILE__), '../libeio/.libs'))

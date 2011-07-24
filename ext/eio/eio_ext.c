@@ -56,8 +56,8 @@ int next_priority = EIO_PRI_DEFAULT;
 /*
  *  Variable declaration for libeio requests
  */
-#define EioSetup() \
-    int ret; \
+#define EioSetup(type) \
+    type ret; \
     eio_req *req;
 
 /*
@@ -125,7 +125,7 @@ static VALUE rb_eio_wrap_request(eio_req *r);
         if (rb_class_of(cb) != rb_cProc) \
             rb_raise(rb_eTypeError, "Expected a Proc callback"); \
         if (rb_funcall(cb, sym_arity, 0) != INT2NUM(arity)) \
-          rb_raise(rb_eArgError, "Callback expects %d argument(s), got %d", arity, FIX2INT(rb_funcall(cb, sym_arity, 0))); \
+          rb_raise(rb_eArgError, "Callback expects %d argument(s), got %d", arity, NUM2INT(rb_funcall(cb, sym_arity, 0))); \
     }
 
 /*
@@ -133,7 +133,7 @@ static VALUE rb_eio_wrap_request(eio_req *r);
  *  a libeio finish callback.
  */
 #define GetRequest(obj) \
-    eio_req * req; \
+    eio_req *req = NULL; \
     Data_Get_Struct(obj, eio_req, req); \
     if (!req) rb_raise(rb_eTypeError, "uninitialized EIO::Request");
 
@@ -273,7 +273,7 @@ rb_eio_open_cb(eio_req *req)
 {
     int fd;
     EioCallback(req,{
-        fd = EIO_RESULT(req);
+        fd = (int)EIO_RESULT(req);
         CloseOnExec(fd);
         rb_funcall(cb, sym_call, 1, INT2NUM(fd));
     });
@@ -299,7 +299,6 @@ rb_eio_read_cb(eio_req *req)
 int
 rb_eio_readdir_cb(eio_req *req)
 {
-    int ret;
     VALUE result, entry;
     char *entries;
     EioCallback(req, {
@@ -474,7 +473,7 @@ rb_eio_s_set_max_poll_time(VALUE eio, VALUE seconds)
 static VALUE
 rb_eio_s_set_max_poll_reqs(VALUE eio, VALUE requests)
 {
-    eio_set_max_poll_reqs(FIX2INT(requests));
+    eio_set_max_poll_reqs(NUM2INT(requests));
     return requests;
 }
 
@@ -488,7 +487,7 @@ rb_eio_s_set_max_poll_reqs(VALUE eio, VALUE requests)
 static VALUE
 rb_eio_s_set_min_parallel(VALUE eio, VALUE threads)
 {
-    eio_set_min_parallel(FIX2INT(threads));
+    eio_set_min_parallel(NUM2INT(threads));
     return threads;
 }
 
@@ -502,7 +501,7 @@ rb_eio_s_set_min_parallel(VALUE eio, VALUE threads)
 static VALUE
 rb_eio_s_set_max_parallel(VALUE eio, VALUE threads)
 {
-    eio_set_max_parallel(FIX2INT(threads));
+    eio_set_max_parallel(NUM2INT(threads));
     return threads;
 }
 
@@ -516,7 +515,7 @@ rb_eio_s_set_max_parallel(VALUE eio, VALUE threads)
 static VALUE
 rb_eio_s_set_max_idle(VALUE eio, VALUE threads)
 {
-    eio_set_max_idle(FIX2INT(threads));
+    eio_set_max_idle(NUM2INT(threads));
     return threads;
 }
 
@@ -530,7 +529,7 @@ rb_eio_s_set_max_idle(VALUE eio, VALUE threads)
 static VALUE
 rb_eio_s_set_idle_timeout(VALUE eio, VALUE seconds)
 {
-    eio_set_idle_timeout(FIX2INT(seconds));
+    eio_set_idle_timeout(NUM2INT(seconds));
     return seconds;
 }
 
@@ -557,7 +556,7 @@ rb_eio_s_priority(int argc, VALUE *argv, VALUE eio)
     VALUE priority;
     rb_scan_args(argc, argv, "01", &priority);
     if NIL_P(priority) return INT2NUM(next_priority);
-    pri = INT2NUM(priority);
+    pri = NUM2INT(priority);
     if (pri < EIO_PRI_MIN) pri = EIO_PRI_MIN;
     if (pri > EIO_PRI_MAX) pri = EIO_PRI_MAX;
     next_priority = pri;
@@ -587,7 +586,7 @@ rb_eio_s_open(int argc, VALUE *argv, VALUE eio)
 {
     int fd;
     VALUE path, flags, mode, proc, cb;
-    EioSetup();
+    EioSetup(int);
     rb_scan_args(argc, argv, "13&", &path, &flags, &mode, &proc, &cb);
     AssertCallback(cb, 1);
     Check_Type(path, T_STRING);
@@ -596,12 +595,12 @@ rb_eio_s_open(int argc, VALUE *argv, VALUE eio)
     if (NIL_P(mode)) mode = eio_default_mode;
     Check_Type(mode, T_FIXNUM);
     SyncRequest({
-        fd = open(StringValueCStr(path), FIX2INT(flags), FIX2INT(mode));
+        fd = open(StringValueCStr(path), NUM2INT(flags), NUM2INT(mode));
         if (fd < 0) rb_sys_fail("open");
         CloseOnExec(fd);
         return INT2NUM(fd);
     });
-    AsyncRequest(open, rb_eio_open_cb, StringValueCStr(path), FIX2INT(flags), FIX2INT(mode));
+    AsyncRequest(open, rb_eio_open_cb, StringValueCStr(path), NUM2INT(flags), NUM2INT(mode));
 }
 
 /*
@@ -621,11 +620,11 @@ static VALUE
 rb_eio_s_close(int argc, VALUE *argv, VALUE eio)
 {
     VALUE fd, proc, cb;
-    EioSetup();
+    EioSetup(int);
     rb_scan_args(argc, argv, "11&", &fd, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(fd, T_FIXNUM);
-    SubmitRequest(close, rb_eio_generic_cb, FIX2INT(fd));
+    SubmitRequest(close, rb_eio_generic_cb, NUM2INT(fd));
 }
 
 /*
@@ -646,11 +645,11 @@ static VALUE
 rb_eio_s_fsync(int argc, VALUE *argv, VALUE eio)
 {
     VALUE fd, proc, cb;
-    EioSetup();
+    EioSetup(int);
     rb_scan_args(argc, argv, "11&", &fd, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(fd, T_FIXNUM);
-    SubmitRequest(fsync, rb_eio_generic_cb, FIX2INT(fd));
+    SubmitRequest(fsync, rb_eio_generic_cb, NUM2INT(fd));
 }
 
 int fdatasync(int fd);
@@ -675,7 +674,7 @@ rb_eio_s_fdatasync(int argc, VALUE *argv, VALUE eio)
 {
     VALUE fd, proc, cb;
     int (*fsync_syscall)(int) = NULL;
-    EioSetup();
+    EioSetup(int);
 #if HAVE_FDATASYNC
        fsync_syscall = fdatasync;
 #else
@@ -685,11 +684,11 @@ rb_eio_s_fdatasync(int argc, VALUE *argv, VALUE eio)
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(fd, T_FIXNUM);
     SyncRequest({
-       ret = (*fsync_syscall)(FIX2INT(fd));
+       ret = (*fsync_syscall)(NUM2INT(fd));
        if (ret == -1) rb_sys_fail("fdatasync");
        return INT2NUM(ret);
     });
-    AsyncRequest(fdatasync, rb_eio_generic_cb, FIX2INT(fd));
+    AsyncRequest(fdatasync, rb_eio_generic_cb, NUM2INT(fd));
 }
 
 /*
@@ -714,7 +713,7 @@ rb_eio_s_read(int argc, VALUE *argv, VALUE eio)
 {
     VALUE fd, len, offset, proc, cb;
     VALUE buf;
-    EioSetup();
+    EioSetup(ssize_t);
     rb_scan_args(argc, argv, "13&", &fd, &len, &offset, &proc, &cb);
     AssertCallback(cb, 1);
     Check_Type(fd, T_FIXNUM);
@@ -724,16 +723,16 @@ rb_eio_s_read(int argc, VALUE *argv, VALUE eio)
     if (NIL_P(offset)) offset = eio_zero;
     Check_Type(offset, T_FIXNUM);
     SyncRequest({
-        buf = rb_str_new(0, FIX2INT(len));
+        buf = rb_str_new(0, NUM2INT(len));
         if (offset == eio_zero){
-            ret = read(FIX2INT(fd), RSTRING_PTR(buf), FIX2INT(len));
+            ret = read(NUM2INT(fd), RSTRING_PTR(buf), NUM2LONG(len));
         } else {
-            ret = pread(FIX2INT(fd), RSTRING_PTR(buf), FIX2INT(len), FIX2INT(offset));
+            ret = pread(NUM2INT(fd), RSTRING_PTR(buf), NUM2LONG(len), NUM2OFFT(offset));
         }
         if (ret == -1) rb_sys_fail("read");
         return buf;
     });
-    AsyncRequest(read, rb_eio_read_cb, FIX2INT(fd), 0, FIX2INT(len), FIX2INT(offset));
+    AsyncRequest(read, rb_eio_read_cb, NUM2INT(fd), 0, NUM2LONG(len), NUM2OFFT(offset));
 }
 
 /*
@@ -760,7 +759,7 @@ rb_eio_s_readahead(int argc, VALUE *argv, VALUE eio)
     VALUE fd, len, offset, proc, cb;
     /* for readahead's emulation fallback in libeio */
     etp_worker *self = calloc(1, sizeof (etp_worker));
-    EioSetup();
+    EioSetup(ssize_t);
     rb_scan_args(argc, argv, "13&", &fd, &len, &offset, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(fd, T_FIXNUM);
@@ -769,7 +768,7 @@ rb_eio_s_readahead(int argc, VALUE *argv, VALUE eio)
     if (len == eio_zero) len = eio_default_bufsize;
     if (NIL_P(offset)) offset = eio_zero;
     Check_Type(offset, T_FIXNUM);
-    SubmitRequest(readahead, rb_eio_generic_cb, FIX2INT(fd), FIX2INT(offset), FIX2INT(len));
+    SubmitRequest(readahead, rb_eio_generic_cb, NUM2INT(fd), NUM2OFFT(offset), NUM2LONG(len));
 }
 
 /*
@@ -792,9 +791,9 @@ rb_eio_s_readahead(int argc, VALUE *argv, VALUE eio)
 static VALUE
 rb_eio_s_write(int argc, VALUE *argv, VALUE eio)
 {
-    int i_len, i_offset;
+    long l_len, l_offset;
     VALUE fd, buf, len, offset, proc, cb, buf_len;
-    EioSetup();
+    EioSetup(ssize_t);
     rb_scan_args(argc, argv, "23&", &fd, &buf, &len, &offset, &proc, &cb);
     AssertCallback(cb, 1);
     Check_Type(fd, T_FIXNUM);
@@ -803,20 +802,20 @@ rb_eio_s_write(int argc, VALUE *argv, VALUE eio)
     Check_Type(len, T_FIXNUM);
     if (NIL_P(offset)) offset = eio_zero;
     Check_Type(offset, T_FIXNUM);
-    i_offset = FIX2INT(offset);
-    i_len = FIX2INT(len);
-    if (i_offset >= RSTRING_LEN(buf)) rb_raise(rb_eArgError, "out of bounds offset");
-    if ((i_offset + i_len) > RSTRING_LEN(buf)) rb_raise(rb_eArgError, "length extends beyond buffer");
+    l_offset = NUM2OFFT(offset);
+    l_len = NUM2LONG(len);
+    if (l_offset >= RSTRING_LEN(buf)) rb_raise(rb_eArgError, "out of bounds offset");
+    if ((l_offset + l_len) > RSTRING_LEN(buf)) rb_raise(rb_eArgError, "length extends beyond buffer");
     SyncRequest({
         if (offset == eio_zero){
-            ret = write(FIX2INT(fd), StringValueCStr(buf), i_len);
+            ret = write(NUM2INT(fd), StringValueCStr(buf), l_len);
         } else {
-            ret = pwrite(FIX2INT(fd), StringValueCStr(buf), i_len, i_offset);
+            ret = pwrite(NUM2INT(fd), StringValueCStr(buf), l_len, l_offset);
         }
         if (ret == -1) rb_sys_fail("write");
         return INT2NUM(ret);
     });
-    AsyncRequest(write, rb_eio_write_cb, FIX2INT(fd), StringValueCStr(buf), i_len, i_offset);
+    AsyncRequest(write, rb_eio_write_cb, NUM2INT(fd), StringValueCStr(buf), l_len, l_offset);
 }
 
 /*
@@ -840,7 +839,7 @@ static VALUE
 rb_eio_s_sendfile(int argc, VALUE *argv, VALUE eio)
 {
     VALUE out_fd, in_fd, offset, len, proc, cb;
-    EioSetup();
+    EioSetup(ssize_t);
     rb_scan_args(argc, argv, "23&", &out_fd, &in_fd, &offset, &len, &proc, &cb);
     AssertCallback(cb, 1);
     Check_Type(in_fd, T_FIXNUM);
@@ -850,7 +849,7 @@ rb_eio_s_sendfile(int argc, VALUE *argv, VALUE eio)
     if (len == eio_zero) len = eio_default_bufsize;
     if (NIL_P(offset)) offset = eio_zero;
     Check_Type(offset, T_FIXNUM);
-    SubmitRequest(sendfile, rb_eio_write_cb, FIX2INT(out_fd), FIX2INT(in_fd), FIX2INT(offset), FIX2INT(len));
+    SubmitRequest(sendfile, rb_eio_write_cb, NUM2INT(out_fd), NUM2INT(in_fd), NUM2OFFT(offset), NUM2LONG(len));
 }
 
 /*
@@ -875,7 +874,7 @@ rb_eio_s_readdir(int argc, VALUE *argv, VALUE eio)
     VALUE files, entry;
     char *name;
     struct dirent *ent;
-    EioSetup();
+    EioSetup(int);
     rb_scan_args(argc, argv, "11&", &path, &proc, &cb);
     AssertCallback(cb, 1);
     Check_Type(path, T_STRING);
@@ -919,13 +918,13 @@ static VALUE
 rb_eio_s_mkdir(int argc, VALUE *argv, VALUE eio)
 {
     VALUE path, mode, proc, cb;
-    EioSetup();
+    EioSetup(int);
     rb_scan_args(argc, argv, "12&", &path, &mode, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(path, T_STRING);
     if (NIL_P(mode)) mode = eio_default_mode;
     Check_Type(mode, T_FIXNUM);
-    SubmitRequest(mkdir, rb_eio_generic_cb, StringValueCStr(path), FIX2INT(mode));
+    SubmitRequest(mkdir, rb_eio_generic_cb, StringValueCStr(path), NUM2INT(mode));
 }
 
 /*
@@ -945,7 +944,7 @@ static VALUE
 rb_eio_s_rmdir(int argc, VALUE *argv, VALUE eio)
 {
     VALUE path, proc, cb;
-    EioSetup();
+    EioSetup(int);
     rb_scan_args(argc, argv, "11&", &path, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(path, T_STRING);
@@ -969,7 +968,7 @@ static VALUE
 rb_eio_s_unlink(int argc, VALUE *argv, VALUE eio)
 {
     VALUE path, proc, cb;
-    EioSetup();
+    EioSetup(int);
     rb_scan_args(argc, argv, "11&", &path, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(path, T_STRING);
@@ -993,7 +992,7 @@ static VALUE
 rb_eio_s_readlink(int argc, VALUE *argv, VALUE eio)
 {
     VALUE path, proc, cb;
-    EioSetup();
+    EioSetup(int);
     rb_scan_args(argc, argv, "11&", &path, &proc, &cb);
     AssertCallback(cb, 1);
     Check_Type(path, T_STRING);
@@ -1020,7 +1019,7 @@ static VALUE
 rb_eio_s_stat(int argc, VALUE *argv, VALUE eio)
 {
     VALUE path, proc, cb;
-    EioSetup();
+    EioSetup(int);
     rb_scan_args(argc, argv, "11&", &path, &proc, &cb);
     AssertCallback(cb, 1);
     Check_Type(path, T_STRING);
@@ -1047,7 +1046,7 @@ static VALUE
 rb_eio_s_rename(int argc, VALUE *argv, VALUE eio)
 {
     VALUE path, new_path, proc, cb;
-    EioSetup();
+    EioSetup(int);
     rb_scan_args(argc, argv, "21&", &path, &new_path, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(path, T_STRING);
@@ -1074,13 +1073,13 @@ static VALUE
 rb_eio_s_chmod(int argc, VALUE *argv, VALUE eio)
 {
     VALUE path, mode, proc, cb;
-    EioSetup();
+    EioSetup(int);
     rb_scan_args(argc, argv, "12&", &path, &mode, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(path, T_STRING);
     if (NIL_P(mode)) mode = eio_default_mode;
     Check_Type(mode, T_FIXNUM);
-    SubmitRequest(chmod, rb_eio_generic_cb, StringValueCStr(path), FIX2INT(mode));
+    SubmitRequest(chmod, rb_eio_generic_cb, StringValueCStr(path), NUM2INT(mode));
 }
 
 /*
@@ -1102,13 +1101,13 @@ static VALUE
 rb_eio_s_fchmod(int argc, VALUE *argv, VALUE eio)
 {
     VALUE fd, mode, proc, cb;
-    EioSetup();
+    EioSetup(int);
     rb_scan_args(argc, argv, "12&", &fd, &mode, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(fd, T_FIXNUM);
     if (NIL_P(mode)) mode = eio_default_mode;
     Check_Type(mode, T_FIXNUM);
-    SubmitRequest(fchmod, rb_eio_generic_cb, FIX2INT(fd), FIX2INT(mode));
+    SubmitRequest(fchmod, rb_eio_generic_cb, NUM2INT(fd), NUM2INT(mode));
 }
 
 /*
@@ -1130,13 +1129,13 @@ static VALUE
 rb_eio_s_truncate(int argc, VALUE *argv, VALUE eio)
 {
     VALUE path, offset, proc, cb;
-    EioSetup();
+    EioSetup(int);
     rb_scan_args(argc, argv, "12&", &path, &offset, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(path, T_STRING);
     if (NIL_P(offset)) offset = eio_zero;
     Check_Type(offset, T_FIXNUM);
-    SubmitRequest(truncate, rb_eio_generic_cb, StringValueCStr(path), FIX2INT(offset));
+    SubmitRequest(truncate, rb_eio_generic_cb, StringValueCStr(path), NUM2INT(offset));
 }
 
 /*
@@ -1158,13 +1157,13 @@ static VALUE
 rb_eio_s_ftruncate(int argc, VALUE *argv, VALUE eio)
 {
     VALUE fd, offset, proc, cb;
-    EioSetup();
+    EioSetup(int);
     rb_scan_args(argc, argv, "12&", &fd, &offset, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(fd, T_FIXNUM);
     if (NIL_P(offset)) offset = eio_zero;
     Check_Type(offset, T_FIXNUM);
-    SubmitRequest(ftruncate, rb_eio_generic_cb, FIX2INT(fd), FIX2INT(offset));
+    SubmitRequest(ftruncate, rb_eio_generic_cb, NUM2INT(fd), NUM2INT(offset));
 }
 
 /*
@@ -1187,7 +1186,7 @@ static VALUE
 rb_eio_s_chown(int argc, VALUE *argv, VALUE eio)
 {
     VALUE path, uid, gid, proc, cb;
-    EioSetup();
+    EioSetup(int);
     rb_scan_args(argc, argv, "13&", &path, &uid, &gid, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(path, T_STRING);
@@ -1195,7 +1194,7 @@ rb_eio_s_chown(int argc, VALUE *argv, VALUE eio)
     Check_Type(uid, T_FIXNUM);
     if (NIL_P(gid)) gid = INT2NUM(getgid());
     Check_Type(gid, T_FIXNUM);
-    SubmitRequest(chown, rb_eio_generic_cb, StringValueCStr(path), FIX2INT(uid), FIX2INT(gid));
+    SubmitRequest(chown, rb_eio_generic_cb, StringValueCStr(path), NUM2INT(uid), NUM2INT(gid));
 }
 
 /*
@@ -1218,7 +1217,7 @@ static VALUE
 rb_eio_s_fchown(int argc, VALUE *argv, VALUE eio)
 {
     VALUE fd, uid, gid, proc, cb;
-    EioSetup();
+    EioSetup(int);
     rb_scan_args(argc, argv, "13&", &fd, &uid, &gid, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(fd, T_FIXNUM);
@@ -1226,7 +1225,7 @@ rb_eio_s_fchown(int argc, VALUE *argv, VALUE eio)
     Check_Type(uid, T_FIXNUM);
     if (NIL_P(gid)) gid = INT2NUM(getgid());
     Check_Type(gid, T_FIXNUM);
-    SubmitRequest(fchown, rb_eio_generic_cb, FIX2INT(fd), FIX2INT(uid), FIX2INT(gid));
+    SubmitRequest(fchown, rb_eio_generic_cb, NUM2INT(fd), NUM2INT(uid), NUM2INT(gid));
 }
 
 /*
@@ -1247,7 +1246,7 @@ static VALUE
 rb_eio_s_link(int argc, VALUE *argv, VALUE eio)
 {
     VALUE path, new_path, proc, cb;
-    EioSetup();
+    EioSetup(int);
     rb_scan_args(argc, argv, "21&", &path, &new_path, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(path, T_STRING);
@@ -1273,7 +1272,7 @@ static VALUE
 rb_eio_s_symlink(int argc, VALUE *argv, VALUE eio)
 {
     VALUE path, new_path, proc, cb;
-    EioSetup();
+    EioSetup(int);
     rb_scan_args(argc, argv, "21&", &path, &new_path, &proc, &cb);
     AssertCallback(cb, NO_CB_ARGS);
     Check_Type(path, T_STRING);
@@ -1564,4 +1563,5 @@ Init_eio_ext()
     rb_define_const(cEioReq, "LINK", INT2NUM(EIO_LINK));
     rb_define_const(cEioReq, "SYMLINK", INT2NUM(EIO_SYMLINK));
     rb_define_const(cEioReq, "READLINK", INT2NUM(EIO_READLINK));
-} 
+}
+ 

@@ -888,16 +888,17 @@ rb_eio_s_write(int argc, VALUE *argv, VALUE eio)
     l_len = NUM2LONG(len);
     if (l_offset >= RSTRING_LEN(buf)) rb_raise(rb_eArgError, "out of bounds offset");
     if ((l_offset + l_len) > RSTRING_LEN(buf)) rb_raise(rb_eArgError, "length extends beyond buffer");
+
     SyncRequest({
         if (offset == eio_zero){
-            ret = write(NUM2INT(fd), StringValueCStr(buf), l_len);
+            ret = write(NUM2INT(fd), StringValuePtr(buf), l_len);
         } else {
-            ret = pwrite(NUM2INT(fd), StringValueCStr(buf), l_len, l_offset);
+            ret = pwrite(NUM2INT(fd), StringValuePtr(buf), l_len, l_offset);
         }
         if (ret == -1) rb_sys_fail("write");
         return INT2NUM(ret);
     });
-    AsyncRequest(write, rb_eio_write_cb, NUM2INT(fd), StringValueCStr(buf), l_len, l_offset);
+    AsyncRequest(write, rb_eio_write_cb, NUM2INT(fd), StringValuePtr(buf), l_len, l_offset);
 }
 
 /*

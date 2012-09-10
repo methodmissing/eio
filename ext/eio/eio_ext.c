@@ -886,8 +886,6 @@ rb_eio_s_write(int argc, VALUE *argv, VALUE eio)
     Check_Type(offset, T_FIXNUM);
     l_offset = NUM2OFFT(offset);
     l_len = NUM2LONG(len);
-    if (l_offset >= RSTRING_LEN(buf)) rb_raise(rb_eArgError, "out of bounds offset");
-    if ((l_offset + l_len) > RSTRING_LEN(buf)) rb_raise(rb_eArgError, "length extends beyond buffer");
 
     SyncRequest({
         if (offset == eio_zero){
